@@ -1,123 +1,123 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой День - Здоровье</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 100%; min-height: 100vh;
-        }
-        .app-container {
-            width: 100%; max-width: 500px; margin: 0 auto;
-            min-height: 100vh; background: #f5f5f5;
-            box-shadow: 0 0 50px rgba(0,0,0,0.3);
-        }
-        .screen { display: none; min-height: 100vh; background: #f5f5f5; }
-        .screen.active { display: flex; flex-direction: column; }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; padding: 20px; text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative;
-        }
-        .header h1 { font-size: 24px; margin-bottom: 5px; }
-        .date { font-size: 14px; opacity: 0.9; }
-        .back-btn {
-            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
-            background: rgba(255,255,255,0.2); border: none; color: white;
-            font-size: 24px; cursor: pointer; width: 40px; height: 40px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        }
-        .dashboard-grid { display: grid; gap: 15px; padding: 20px; flex: 1; overflow-y: auto; }
-        .card {
-            background: white; border-radius: 20px; padding: 20px;
-            display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1); cursor: pointer;
-            border: none; width: 100%; text-align: left;
-        }
-        .card:active { transform: scale(0.97); }
-        .card-icon {
-            font-size: 40px; width: 65px; height: 65px;
-            display: flex; align-items: center; justify-content: center;
-            background: #f0f0f0; border-radius: 18px; flex-shrink: 0;
-        }
-        .card-content h3 { font-size: 18px; color: #333; margin-bottom: 5px; }
-        .card-content p { color: #888; font-size: 14px; }
-        .bottom-nav {
-            display: flex; background: white;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 100;
-            position: sticky; bottom: 0;
-        }
-        .nav-btn {
-            flex: 1; display: flex; flex-direction: column; align-items: center;
-            padding: 12px; background: none; border: none; cursor: pointer;
-            color: #999; font-size: 11px;
-        }
-        .nav-btn.active { color: #667eea; font-weight: bold; }
-        .nav-btn .icon { font-size: 24px; margin-bottom: 3px; }
-        .screen-content {
-            padding: 20px; padding-bottom: 80px; flex: 1; overflow-y: auto;
-        }
-        .screen-content h2 { font-size: 20px; color: #333; margin: 20px 0 15px; }
-        .stat-card {
-            background: white; border-radius: 15px; padding: 20px;
-            margin-bottom: 15px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); text-align: center;
-        }
-        .big-number { font-size: 48px; font-weight: bold; color: #667eea; }
-        .unit { font-size: 16px; color: #999; }
-        .btn {
-            display: block; width: 100%; padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; border-radius: 15px; font-size: 16px;
-            cursor: pointer; margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
-        }
-        .btn:active { transform: scale(0.97); }
-        .btn-small {
-            padding: 12px 20px; font-size: 14px; margin: 4px;
-            display: inline-block; width: auto;
-        }
-        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
-        .mood-btn {
-            background: white; border: 3px solid #e0e0e0; border-radius: 15px;
-            padding: 20px; font-size: 40px; cursor: pointer; aspect-ratio: 1;
-        }
-        .mood-btn:active { border-color: #667eea; transform: scale(0.9); }
-        input[type="number"], input[type="text"], input[type="time"] {
-            width: 100%; padding: 15px; border: 2px solid #e0e0e0;
-            border-radius: 10px; font-size: 16px; margin-bottom: 8px;
-        }
-        .toast {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: #4CAF50; color: white; padding: 18px 30px;
-            border-radius: 12px; font-size: 16px; z-index: 1000; display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .toast.show { display: block; animation: slideIn 0.3s; }
-        @keyframes slideIn {
-            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
-            to { transform: translateX(-50%) translateY(0); opacity: 1; }
-        }
-        .history-list {
-            background: white; border-radius: 12px; overflow: hidden;
-            margin: 10px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .history-item {
-            padding: 15px 20px; border-bottom: 1px solid #f0f0f0;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .history-item:last-child { border-bottom: none; }
-        .profile-avatar { text-align: center; font-size: 80px; margin: 20px 0; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мой День - Здоровье</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    width: 100%; min-height: 100vh;
+}
+.app-container {
+    width: 100%; max-width: 500px; margin: 0 auto;
+    min-height: 100vh; background: #f5f5f5;
+    box-shadow: 0 0 50px rgba(0,0,0,0.3);
+}
+.screen { display: none; min-height: 100vh; background: #f5f5f5; }
+.screen.active { display: flex; flex-direction: column; }
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white; padding: 20px; text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative;
+}
+.header h1 { font-size: 24px; margin-bottom: 5px; }
+.date { font-size: 14px; opacity: 0.9; }
+.back-btn {
+    position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.2); border: none; color: white;
+    font-size: 24px; cursor: pointer; width: 40px; height: 40px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.dashboard-grid { display: grid; gap: 15px; padding: 20px; flex: 1; overflow-y: auto; }
+.card {
+    background: white; border-radius: 20px; padding: 20px;
+    display: flex; align-items: center; gap: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1); cursor: pointer;
+    border: none; width: 100%; text-align: left;
+}
+.card:active { transform: scale(0.97); }
+.card-icon {
+    font-size: 40px; width: 65px; height: 65px;
+    display: flex; align-items: center; justify-content: center;
+    background: #f0f0f0; border-radius: 18px; flex-shrink: 0;
+}
+.card-content h3 { font-size: 18px; color: #333; margin-bottom: 5px; }
+.card-content p { color: #888; font-size: 14px; }
+.bottom-nav {
+    display: flex; background: white;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 100;
+    position: sticky; bottom: 0;
+}
+.nav-btn {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 12px; background: none; border: none; cursor: pointer;
+    color: #999; font-size: 11px;
+}
+.nav-btn.active { color: #667eea; font-weight: bold; }
+.nav-btn .icon { font-size: 24px; margin-bottom: 3px; }
+.screen-content {
+    padding: 20px; padding-bottom: 80px; flex: 1; overflow-y: auto;
+}
+.screen-content h2 { font-size: 20px; color: #333; margin: 20px 0 15px; }
+.stat-card {
+    background: white; border-radius: 15px; padding: 20px;
+    margin-bottom: 15px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); text-align: center;
+}
+.big-number { font-size: 48px; font-weight: bold; color: #667eea; }
+.unit { font-size: 16px; color: #999; }
+.btn {
+    display: block; width: 100%; padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white; border: none; border-radius: 15px; font-size: 16px;
+    cursor: pointer; margin-top: 10px;
+    box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+}
+.btn:active { transform: scale(0.97); }
+.btn-small {
+    padding: 12px 20px; font-size: 14px; margin: 4px;
+    display: inline-block; width: auto;
+}
+.mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+.mood-btn {
+    background: white; border: 3px solid #e0e0e0; border-radius: 15px;
+    padding: 20px; font-size: 40px; cursor: pointer; aspect-ratio: 1;
+}
+.mood-btn:active { border-color: #667eea; transform: scale(0.9); }
+input[type="number"], input[type="text"], input[type="time"] {
+    width: 100%; padding: 15px; border: 2px solid #e0e0e0;
+    border-radius: 10px; font-size: 16px; margin-bottom: 8px;
+}
+.toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    background: #4CAF50; color: white; padding: 18px 30px;
+    border-radius: 12px; font-size: 16px; z-index: 1000; display: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.toast.show { display: block; animation: slideIn 0.3s; }
+@keyframes slideIn {
+    from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+.history-list {
+    background: white; border-radius: 12px; overflow: hidden;
+    margin: 10px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.history-item {
+    padding: 15px 20px; border-bottom: 1px solid #f0f0f0;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.history-item:last-child { border-bottom: none; }
+.profile-avatar { text-align: center; font-size: 80px; margin: 20px 0; }
+</style>
 </head>
 <body>
 <div class="app-container">
 
 <!-- DASHBOARD -->
-<div id="dashboard" class="screen active">
+<div id="dashboard-screen" class="screen active">
     <div class="header">
         <h1>🏥 Мой День</h1>
         <div class="date" id="currentDate"></div>
@@ -292,7 +292,10 @@ function save() { localStorage.setItem('myday', JSON.stringify(data)); updateAll
 
 function openScreen(name) {
     document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-    document.getElementById(name + '-screen').classList.add('active');
+    var target = document.getElementById(name + '-screen');
+    if (target) {
+        target.classList.add('active');
+    }
     updateAll();
 }
 
@@ -372,22 +375,42 @@ function updateAll() {
 
     var st = document.getElementById('sleep-total'); if (st) st.textContent = data.sleep;
     var sh = document.getElementById('sleep-history');
-    if (sh) sh.innerHTML = data.sleepHistory.length === 0 ? '<div class="history-item">Нет данных</div>' : data.sleepHistory.map(function(i) { return '<div class="history-item"><span>' + i.date + '</span><span>' + i.hours + ' ч</span></div>'; }).join('');
+    if (sh) sh.innerHTML = data.sleepHistory.length === 0
+        ? '<div class="history-item">Нет данных</div>'
+        : data.sleepHistory.map(function(i) {
+            return '<div class="history-item"><span>' + i.date + '</span><span>' + i.hours + ' ч</span></div>';
+        }).join('');
 
     var wt = document.getElementById('water-total'); if (wt) wt.textContent = data.water;
     var wh = document.getElementById('water-history');
-    if (wh) wh.innerHTML = data.waterHistory.length === 0 ? '<div class="history-item">Нет данных</div>' : data.waterHistory.map(function(i) { return '<div class="history-item"><span>' + i.date + '</span><span>' + i.amount + ' мл</span></div>'; }).join('');
+    if (wh) wh.innerHTML = data.waterHistory.length === 0
+        ? '<div class="history-item">Нет данных</div>'
+        : data.waterHistory.map(function(i) {
+            return '<div class="history-item"><span>' + i.date + '</span><span>' + i.amount + ' мл</span></div>';
+        }).join('');
 
     var stt = document.getElementById('steps-total'); if (stt) stt.textContent = data.steps;
     var sth = document.getElementById('steps-history');
-    if (sth) sth.innerHTML = data.stepsHistory.length === 0 ? '<div class="history-item">Нет данных</div>' : data.stepsHistory.map(function(i) { return '<div class="history-item"><span>' + i.date + '</span><span>' + i.steps + ' шагов</span></div>'; }).join('');
+    if (sth) sth.innerHTML = data.stepsHistory.length === 0
+        ? '<div class="history-item">Нет данных</div>'
+        : data.stepsHistory.map(function(i) {
+            return '<div class="history-item"><span>' + i.date + '</span><span>' + i.steps + ' шагов</span></div>';
+        }).join('');
 
     var mc = document.getElementById('mood-current'); if (mc) mc.textContent = data.mood;
     var mh = document.getElementById('mood-history');
-    if (mh) mh.innerHTML = data.moodHistory.length === 0 ? '<div class="history-item">Нет данных</div>' : data.moodHistory.map(function(i) { return '<div class="history-item"><span>' + i.date + '</span><span>' + i.mood + ' ' + i.name + '</span></div>'; }).join('');
+    if (mh) mh.innerHTML = data.moodHistory.length === 0
+        ? '<div class="history-item">Нет данных</div>'
+        : data.moodHistory.map(function(i) {
+            return '<div class="history-item"><span>' + i.date + '</span><span>' + i.mood + ' ' + i.name + '</span></div>';
+        }).join('');
 
     var ml = document.getElementById('medicine-list');
-    if (ml) ml.innerHTML = data.medicines.length === 0 ? '<div class="history-item">Нет лекарств</div>' : data.medicines.map(function(med, i) { return '<div class="history-item"><span><strong>' + med.name + '</strong><br><small>' + med.time + '</small></span><button class="btn btn-small" onclick="deleteMedicine(' + i + ')" style="background:red;">🗑️</button></div>'; }).join('');
+    if (ml) ml.innerHTML = data.medicines.length === 0
+        ? '<div class="history-item">Нет лекарств</div>'
+        : data.medicines.map(function(med, i) {
+            return '<div class="history-item"><span><strong>' + med.name + '</strong><br><small>' + med.time + '</small></span><button class="btn btn-small" onclick="deleteMedicine(' + i + ')" style="background:red;">🗑️</button></div>';
+        }).join('');
 
     var ss = document.getElementById('stats-sleep'); if (ss) ss.textContent = data.sleep;
     var sw = document.getElementById('stats-water'); if (sw) sw.textContent = data.water;
@@ -398,7 +421,13 @@ function updateAll() {
 
 function clearAllData() {
     if (confirm('Удалить все данные?')) {
-        data = { sleep: 0, sleepHistory: [], water: 0, waterHistory: [], steps: 0, stepsHistory: [], mood: '😊', moodName: 'Отличное', moodHistory: [], medicines: [] };
+        data = {
+            sleep: 0, sleepHistory: [],
+            water: 0, waterHistory: [],
+            steps: 0, stepsHistory: [],
+            mood: '😊', moodName: 'Отличное', moodHistory: [],
+            medicines: []
+        };
         save(); toast('🗑️ Все данные удалены');
     }
 }
