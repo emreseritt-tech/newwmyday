@@ -3,158 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой День - Здоровье</title>
+    <title>Мой День</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 100%; min-height: 100vh;
-        }
-        .app-container {
-            width: 100%; max-width: 500px; margin: 0 auto;
-            min-height: 100vh; background: #f5f5f5;
-            box-shadow: 0 0 50px rgba(0,0,0,0.3);
-        }
-        .screen { display: none; min-height: 100vh; background: #f5f5f5; }
-        .screen.active { display: flex; flex-direction: column; }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; padding: 20px; text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative;
-        }
-        .header h1 { font-size: 24px; margin-bottom: 5px; }
-        .date { font-size: 14px; opacity: 0.9; }
-        .back-btn {
-            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
-            background: rgba(255,255,255,0.2); border: none; color: white;
-            font-size: 24px; cursor: pointer; width: 40px; height: 40px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        }
-        .dashboard-grid { display: grid; gap: 15px; padding: 20px; flex: 1; overflow-y: auto; }
-        .card {
-            background: white; border-radius: 20px; padding: 20px;
-            display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1); cursor: pointer;
-            border: none; width: 100%; text-align: left;
-        }
-        .card:active { transform: scale(0.97); }
-        .card-icon {
-            font-size: 40px; width: 65px; height: 65px;
-            display: flex; align-items: center; justify-content: center;
-            background: #f0f0f0; border-radius: 18px; flex-shrink: 0;
-        }
-        .card-content h3 { font-size: 18px; color: #333; margin-bottom: 5px; }
-        .card-content p { color: #888; font-size: 14px; }
-        .bottom-nav {
-            display: flex; background: white;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 100;
-            position: sticky; bottom: 0;
-        }
-        .nav-btn {
-            flex: 1; display: flex; flex-direction: column; align-items: center;
-            padding: 12px; background: none; border: none; cursor: pointer;
-            color: #999; font-size: 11px;
-        }
-        .nav-btn.active { color: #667eea; font-weight: bold; }
-        .nav-btn .icon { font-size: 24px; margin-bottom: 3px; }
-        .screen-content {
-            padding: 20px; padding-bottom: 80px; flex: 1; overflow-y: auto;
-        }
-        .screen-content h2 { font-size: 20px; color: #333; margin: 20px 0 15px; }
-        .stat-card {
-            background: white; border-radius: 15px; padding: 20px;
-            margin-bottom: 15px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); text-align: center;
-        }
-        .big-number { font-size: 48px; font-weight: bold; color: #667eea; }
-        .unit { font-size: 16px; color: #999; }
-        .btn {
-            display: block; width: 100%; padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; border-radius: 15px; font-size: 16px;
-            cursor: pointer; margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
-        }
-        .btn:active { transform: scale(0.97); }
-        .btn-small {
-            padding: 12px 20px; font-size: 14px; margin: 4px;
-            display: inline-block; width: auto;
-        }
-        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
-        .mood-btn {
-            background: white; border: 3px solid #e0e0e0; border-radius: 15px;
-            padding: 20px; font-size: 40px; cursor: pointer; aspect-ratio: 1;
-        }
-        .mood-btn:active { border-color: #667eea; transform: scale(0.9); }
-        input[type="number"], input[type="text"], input[type="time"] {
-            width: 100%; padding: 15px; border: 2px solid #e0e0e0;
-            border-radius: 10px; font-size: 16px; margin-bottom: 8px;
-        }
-        .toast {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: #4CAF50; color: white; padding: 18px 30px;
-            border-radius: 12px; font-size: 16px; z-index: 1000; display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .toast.show { display: block; animation: slideIn 0.3s; }
-        @keyframes slideIn {
-            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
-            to { transform: translateX(-50%) translateY(0); opacity: 1; }
-        }
-        .history-list {
-            background: white; border-radius: 12px; overflow: hidden;
-            margin: 10px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .history-item {
-            padding: 15px 20px; border-bottom: 1px solid #f0f0f0;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .history-item:last-child { border-bottom: none; }
-        .profile-avatar { text-align: center; font-size: 80px; margin: 20px 0; }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:Arial,sans-serif;background:#f0f4f8;max-width:500px;margin:0 auto;min-height:100vh}
+        .screen{display:none;min-height:100vh;background:#f5f5f5}
+        .screen.active{display:flex;flex-direction:column}
+        .header{background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:20px;text-align:center;position:relative}
+        .header h1{font-size:24px}
+        .date{font-size:14px;opacity:.9}
+        .back-btn{position:absolute;left:15px;top:18px;background:rgba(255,255,255,.2);border:none;color:white;font-size:22px;cursor:pointer;width:38px;height:38px;border-radius:50%}
+        .dashboard-grid{display:grid;gap:12px;padding:20px;flex:1}
+        .card{background:white;border-radius:16px;padding:18px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(0,0,0,.1);cursor:pointer;border:none;width:100%;text-align:left}
+        .card:active{transform:scale(.97)}
+        .card-icon{font-size:36px;width:55px;height:55px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;border-radius:15px;flex-shrink:0}
+        .card-content h3{font-size:16px;color:#333}
+        .card-content p{color:#888;font-size:13px}
+        .bottom-nav{display:flex;background:white;box-shadow:0 -3px 12px rgba(0,0,0,.1);position:sticky;bottom:0}
+        .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px;background:none;border:none;cursor:pointer;color:#999;font-size:11px}
+        .nav-btn.active{color:#667eea;font-weight:bold}
+        .nav-btn .icon{font-size:22px;margin-bottom:3px}
+        .screen-content{padding:20px;padding-bottom:80px;flex:1;overflow-y:auto}
+        .screen-content h2{font-size:18px;color:#333;margin:15px 0 10px}
+        .stat-card{background:white;border-radius:15px;padding:20px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);text-align:center}
+        .big-number{font-size:42px;font-weight:bold;color:#667eea}
+        .unit{font-size:14px;color:#999}
+        .btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:12px;font-size:15px;cursor:pointer;margin-top:8px}
+        .btn:active{transform:scale(.97)}
+        .btn-small{padding:10px 18px;font-size:13px;margin:3px;display:inline-block;width:auto}
+        .mood-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+        .mood-btn{background:white;border:3px solid #e0e0e0;border-radius:15px;padding:18px;font-size:38px;cursor:pointer}
+        .mood-btn:active{border-color:#667eea;transform:scale(.9)}
+        input[type="number"],input[type="text"],input[type="time"]{width:100%;padding:14px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;margin-bottom:6px}
+        .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#4CAF50;color:white;padding:16px 28px;border-radius:10px;font-size:15px;z-index:1000;display:none;box-shadow:0 8px 25px rgba(0,0,0,.3)}
+        .toast.show{display:block;animation:slideIn .3s}
+        @keyframes slideIn{from{transform:translateX(-50%) translateY(-100px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+        .history-list{background:white;border-radius:10px;overflow:hidden;margin:8px 0}
+        .history-item{padding:14px 18px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+        .history-item:last-child{border-bottom:none}
+        .profile-avatar{text-align:center;font-size:70px;margin:15px 0}
     </style>
 </head>
 <body>
-<div class="app-container">
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="screen active">
     <div class="header">
         <h1>🏥 Мой День</h1>
         <div class="date" id="currentDate"></div>
     </div>
     <div class="dashboard-grid">
-        <button class="card" onclick="openScreen('sleep')">
+        <button class="card" onclick="goTo('sleep')">
             <div class="card-icon">😴</div>
             <div class="card-content"><h3>Сон</h3><p id="sleep-display">0 часов</p></div>
         </button>
-        <button class="card" onclick="openScreen('water')">
+        <button class="card" onclick="goTo('water')">
             <div class="card-icon">💧</div>
             <div class="card-content"><h3>Вода</h3><p id="water-display">0 мл</p></div>
         </button>
-        <button class="card" onclick="openScreen('steps')">
+        <button class="card" onclick="goTo('steps')">
             <div class="card-icon">👟</div>
             <div class="card-content"><h3>Шаги</h3><p id="steps-display">0 шагов</p></div>
         </button>
-        <button class="card" onclick="openScreen('mood')">
+        <button class="card" onclick="goTo('mood')">
             <div class="card-icon">😊</div>
             <div class="card-content"><h3>Настроение</h3><p id="mood-display">Отличное</p></div>
         </button>
-        <button class="card" onclick="openScreen('medicine')">
+        <button class="card" onclick="goTo('medicine')">
             <div class="card-icon">💊</div>
             <div class="card-content"><h3>Лекарства</h3><p id="medicine-display">0 активных</p></div>
         </button>
     </div>
     <div class="bottom-nav">
-        <button class="nav-btn active" onclick="openScreen('dashboard')"><span class="icon">🏠</span> Главная</button>
-        <button class="nav-btn" onclick="openScreen('stats')"><span class="icon">📊</span> Статистика</button>
-        <button class="nav-btn" onclick="openScreen('profile')"><span class="icon">👤</span> Профиль</button>
+        <button class="nav-btn active" onclick="goTo('dashboard')"><span class="icon">🏠</span>Главная</button>
+        <button class="nav-btn" onclick="goTo('stats')"><span class="icon">📊</span>Статистика</button>
+        <button class="nav-btn" onclick="goTo('profile')"><span class="icon">👤</span>Профиль</button>
     </div>
 </div>
 
-<!-- SLEEP -->
 <div id="sleep-screen" class="screen">
     <div class="header">
-        <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+        <button class="back-btn" onclick="goBack()">←</button>
         <h1>😴 Сон</h1>
     </div>
     <div class="screen-content">
@@ -167,15 +95,13 @@
     </div>
 </div>
 
-<!-- WATER -->
 <div id="water-screen" class="screen">
     <div class="header">
-        <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+        <button class="back-btn" onclick="goBack()">←</button>
         <h1>💧 Вода</h1>
     </div>
     <div class="screen-content">
-        <div class="stat-card"><div class="big-number" id="water-total">0</div><div class="unit">мл сегодня (цель: 2000 мл)</div></div>
-        <h2>Быстрое добавление</h2>
+        <div class="stat-card"><div class="big-number" id="water-total">0</div><div class="unit">мл сегодня</div></div>
         <button class="btn btn-small" onclick="addWater(100)">+100 мл</button>
         <button class="btn btn-small" onclick="addWater(250)">+250 мл</button>
         <button class="btn btn-small" onclick="addWater(500)">+500 мл</button>
@@ -187,10 +113,9 @@
     </div>
 </div>
 
-<!-- STEPS -->
 <div id="steps-screen" class="screen">
     <div class="header">
-        <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+        <button class="back-btn" onclick="goBack()">←</button>
         <h1>👟 Шаги</h1>
     </div>
     <div class="screen-content">
@@ -203,14 +128,13 @@
     </div>
 </div>
 
-<!-- MOOD -->
 <div id="mood-screen" class="screen">
     <div class="header">
-        <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+        <button class="back-btn" onclick="goBack()">←</button>
         <h1>😊 Настроение</h1>
     </div>
     <div class="screen-content">
-        <div class="stat-card"><div class="big-number" id="mood-current">😊</div><div class="unit">текущее настроение</div></div>
+        <div class="stat-card"><div class="big-number" id="mood-current">😊</div><div class="unit">текущее</div></div>
         <h2>Как вы себя чувствуете?</h2>
         <div class="mood-grid">
             <button class="mood-btn" onclick="setMood('😊','Отличное')">😊</button>
@@ -222,60 +146,54 @@
     </div>
 </div>
 
-<!-- MEDICINE -->
 <div id="medicine-screen" class="screen">
     <div class="header">
-        <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+        <button class="back-btn" onclick="goBack()">←</button>
         <h1>💊 Лекарства</h1>
     </div>
     <div class="screen-content">
         <h2>Добавить лекарство</h2>
         <input type="text" id="med-name" placeholder="Название лекарства">
-        <input type="time" id="med-time" placeholder="Время приёма">
+        <input type="time" id="med-time">
         <button class="btn" onclick="addMedicine()">💾 Сохранить</button>
         <h2>Мои лекарства</h2>
         <div id="medicine-list" class="history-list"><div class="history-item">Нет лекарств</div></div>
     </div>
 </div>
 
-<!-- STATS -->
 <div id="stats-screen" class="screen">
     <div class="header"><h1>📊 Статистика</h1></div>
     <div class="screen-content">
-        <div class="stat-card"><h3>😴 Сон</h3><div class="big-number" id="stats-sleep">0</div><div class="unit">часов</div></div>
-        <div class="stat-card"><h3>💧 Вода</h3><div class="big-number" id="stats-water">0</div><div class="unit">мл</div></div>
-        <div class="stat-card"><h3>👟 Шаги</h3><div class="big-number" id="stats-steps">0</div><div class="unit">шагов</div></div>
-        <div class="stat-card"><h3>😊 Настроение</h3><div class="big-number" id="stats-mood">😊</div><div class="unit">текущее</div></div>
-        <div class="stat-card"><h3>💊 Лекарства</h3><div class="big-number" id="stats-medicine">0</div><div class="unit">активных</div></div>
+        <div class="stat-card"><h3>😴 Сон</h3><div class="big-number" id="stats-sleep">0</div></div>
+        <div class="stat-card"><h3>💧 Вода</h3><div class="big-number" id="stats-water">0</div></div>
+        <div class="stat-card"><h3>👟 Шаги</h3><div class="big-number" id="stats-steps">0</div></div>
+        <div class="stat-card"><h3>😊 Настроение</h3><div class="big-number" id="stats-mood">😊</div></div>
+        <div class="stat-card"><h3>💊 Лекарства</h3><div class="big-number" id="stats-medicine">0</div></div>
     </div>
     <div class="bottom-nav">
-        <button class="nav-btn" onclick="openScreen('dashboard')"><span class="icon">🏠</span> Главная</button>
-        <button class="nav-btn active" onclick="openScreen('stats')"><span class="icon">📊</span> Статистика</button>
-        <button class="nav-btn" onclick="openScreen('profile')"><span class="icon">👤</span> Профиль</button>
+        <button class="nav-btn" onclick="goTo('dashboard')"><span class="icon">🏠</span>Главная</button>
+        <button class="nav-btn active" onclick="goTo('stats')"><span class="icon">📊</span>Статистика</button>
+        <button class="nav-btn" onclick="goTo('profile')"><span class="icon">👤</span>Профиль</button>
     </div>
 </div>
 
-<!-- PROFILE -->
 <div id="profile-screen" class="screen">
     <div class="header"><h1>👤 Профиль</h1></div>
     <div class="screen-content">
         <div class="profile-avatar">👤</div>
         <div class="stat-card">
             <h3>Мой День v1.0</h3>
-            <p>Приложение для отслеживания здоровья</p>
             <p>ННГУ им. Лобачевского</p>
             <p>Группа 3825Б1ПР3</p>
         </div>
-        <button class="btn" onclick="clearAllData()">🗑️ Очистить все данные</button>
+        <button class="btn" onclick="clearAllData()">🗑️ Очистить данные</button>
     </div>
     <div class="bottom-nav">
-        <button class="nav-btn" onclick="openScreen('dashboard')"><span class="icon">🏠</span> Главная</button>
-        <button class="nav-btn" onclick="openScreen('stats')"><span class="icon">📊</span> Статистика</button>
-        <button class="nav-btn active" onclick="openScreen('profile')"><span class="icon">👤</span> Профиль</button>
+        <button class="nav-btn" onclick="goTo('dashboard')"><span class="icon">🏠</span>Главная</button>
+        <button class="nav-btn" onclick="goTo('stats')"><span class="icon">📊</span>Статистика</button>
+        <button class="nav-btn active" onclick="goTo('profile')"><span class="icon">👤</span>Профиль</button>
     </div>
 </div>
-
-</div><!-- app-container -->
 
 <div class="toast" id="toast"></div>
 
@@ -288,18 +206,26 @@ var data = JSON.parse(localStorage.getItem('myday')) || {
     medicines: []
 };
 
+var currentScreen = 'dashboard';
+
 function save() { localStorage.setItem('myday', JSON.stringify(data)); updateAll(); }
 
-function openScreen(name) {
+function goTo(name) {
     document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-    document.getElementById(name + '-screen').classList.add('active');
+    var screen = document.getElementById(name + '-screen');
+    if (screen) screen.classList.add('active');
+    currentScreen = name;
     updateAll();
+}
+
+function goBack() {
+    goTo('dashboard');
 }
 
 function toast(msg) {
     var t = document.getElementById('toast');
     t.textContent = msg; t.classList.add('show');
-    setTimeout(function() { t.classList.remove('show'); }, 2500);
+    setTimeout(function() { t.classList.remove('show'); }, 2000);
 }
 
 function getDate() { return new Date().toLocaleDateString('ru-RU'); }
@@ -310,14 +236,14 @@ function addSleep() {
         data.sleep = val;
         data.sleepHistory.unshift({ date: getDate(), hours: val });
         document.getElementById('sleep-input').value = '';
-        save(); toast('✅ Сон сохранен: ' + val + ' ч');
+        save(); toast('✅ Сон: ' + val + ' ч');
     }
 }
 
 function addWater(amount) {
     data.water += amount;
     data.waterHistory.unshift({ date: getDate(), amount: amount });
-    save(); toast('✅ +' + amount + ' мл воды');
+    save(); toast('✅ +' + amount + ' мл');
 }
 
 function addWaterManual() {
@@ -331,14 +257,14 @@ function addSteps() {
         data.steps = val;
         data.stepsHistory.unshift({ date: getDate(), steps: val });
         document.getElementById('steps-input').value = '';
-        save(); toast('✅ Шаги сохранены: ' + val);
+        save(); toast('✅ Шаги: ' + val);
     }
 }
 
 function setMood(emoji, name) {
     data.mood = emoji; data.moodName = name;
     data.moodHistory.unshift({ date: getDate(), mood: emoji, name: name });
-    save(); toast('✅ Настроение: ' + emoji + ' ' + name);
+    save(); toast('✅ Настроение: ' + emoji);
 }
 
 function addMedicine() {
@@ -348,14 +274,13 @@ function addMedicine() {
         data.medicines.push({ name: name, time: time });
         document.getElementById('med-name').value = '';
         document.getElementById('med-time').value = '';
-        save(); toast('✅ Лекарство добавлено: ' + name);
+        save(); toast('✅ Добавлено: ' + name);
     }
 }
 
 function deleteMedicine(index) {
-    var name = data.medicines[index].name;
     data.medicines.splice(index, 1);
-    save(); toast('🗑️ Удалено: ' + name);
+    save(); toast('🗑️ Удалено');
 }
 
 function updateAll() {
