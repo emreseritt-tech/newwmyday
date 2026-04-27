@@ -25,7 +25,12 @@ min-height:100vh;
 box-shadow:0 0 40px rgba(0,0,0,.3);
 }
 
-.screen{display:none;min-height:100vh;flex-direction:column}
+.screen{
+display:none;
+min-height:100vh;
+flex-direction:column;
+}
+
 .screen.active{display:flex}
 
 .header{
@@ -37,14 +42,23 @@ position:relative;
 }
 
 .back-btn{
-position:absolute;left:10px;top:50%;
+position:absolute;
+left:10px;
+top:50%;
 transform:translateY(-50%);
+width:40px;
+height:40px;
+border:none;
+border-radius:50%;
 background:rgba(255,255,255,.2);
-border:none;color:white;
-width:40px;height:40px;border-radius:50%;
+color:white;
 }
 
-.dashboard-grid{padding:20px;display:grid;gap:15px}
+.dashboard-grid{
+padding:20px;
+display:grid;
+gap:15px;
+}
 
 .card{
 background:white;
@@ -52,8 +66,8 @@ padding:18px;
 border-radius:15px;
 display:flex;
 gap:15px;
-cursor:pointer;
 border:none;
+cursor:pointer;
 }
 
 .card-icon{font-size:35px}
@@ -71,7 +85,6 @@ border:none;
 background:none;
 padding:12px;
 color:#999;
-cursor:pointer;
 }
 
 .nav-btn.active{color:#667eea;font-weight:bold}
@@ -95,8 +108,8 @@ border:none;
 border-radius:12px;
 background:#667eea;
 color:white;
-cursor:pointer;
 margin-top:10px;
+cursor:pointer;
 }
 
 input{
@@ -120,25 +133,11 @@ margin-top:10px;
 
 <div class="dashboard-grid">
 
-<button class="card" onclick="go('sleep')">
-<div class="card-icon">😴</div><div>Сон</div>
-</button>
-
-<button class="card" onclick="go('water')">
-<div class="card-icon">💧</div><div>Вода</div>
-</button>
-
-<button class="card" onclick="go('steps')">
-<div class="card-icon">👟</div><div>Шаги</div>
-</button>
-
-<button class="card" onclick="go('mood')">
-<div class="card-icon">😊</div><div>Настроение</div>
-</button>
-
-<button class="card" onclick="go('medicine')">
-<div class="card-icon">💊</div><div>Лекарства</div>
-</button>
+<button class="card" onclick="go('sleep')">😴 Сон</button>
+<button class="card" onclick="go('water')">💧 Вода</button>
+<button class="card" onclick="go('steps')">👟 Шаги</button>
+<button class="card" onclick="go('mood')">😊 Настроение</button>
+<button class="card" onclick="go('medicine')">💊 Лекарства</button>
 
 </div>
 
@@ -151,37 +150,49 @@ margin-top:10px;
 
 <!-- SLEEP -->
 <div id="sleep" class="screen">
-<div class="header"><button class="back-btn" onclick="go('dashboard')">←</button><h1>Сон</h1></div>
+<div class="header">
+<button class="back-btn" onclick="go('dashboard')">←</button>
+<h1>Сон</h1>
+</div>
 <div class="screen-content">
 <div class="stat-card"><div class="big-number" id="sleepVal">0</div></div>
-<input id="sleepInput" type="number">
+<input id="sleepInput">
 <button class="btn" onclick="saveSleep()">Save</button>
 </div>
 </div>
 
 <!-- WATER -->
 <div id="water" class="screen">
-<div class="header"><button class="back-btn" onclick="go('dashboard')">←</button><h1>Вода</h1></div>
+<div class="header">
+<button class="back-btn" onclick="go('dashboard')">←</button>
+<h1>Вода</h1>
+</div>
 <div class="screen-content">
 <div class="stat-card"><div class="big-number" id="waterVal">0</div></div>
-<input id="waterInput" type="number">
+<input id="waterInput">
 <button class="btn" onclick="saveWater()">Save</button>
 </div>
 </div>
 
 <!-- STEPS -->
 <div id="steps" class="screen">
-<div class="header"><button class="back-btn" onclick="go('dashboard')">←</button><h1>Шаги</h1></div>
+<div class="header">
+<button class="back-btn" onclick="go('dashboard')">←</button>
+<h1>Шаги</h1>
+</div>
 <div class="screen-content">
 <div class="stat-card"><div class="big-number" id="stepsVal">0</div></div>
-<input id="stepsInput" type="number">
+<input id="stepsInput">
 <button class="btn" onclick="saveSteps()">Save</button>
 </div>
 </div>
 
 <!-- MOOD -->
 <div id="mood" class="screen">
-<div class="header"><button class="back-btn" onclick="go('dashboard')">←</button><h1>Настроение</h1></div>
+<div class="header">
+<button class="back-btn" onclick="go('dashboard')">←</button>
+<h1>Настроение</h1>
+</div>
 <div class="screen-content">
 <div class="stat-card"><div class="big-number" id="moodVal">😊</div></div>
 <button class="btn" onclick="setMood('😊')">😊</button>
@@ -190,7 +201,10 @@ margin-top:10px;
 
 <!-- MEDICINE -->
 <div id="medicine" class="screen">
-<div class="header"><button class="back-btn" onclick="go('dashboard')">←</button><h1>Лекарства</h1></div>
+<div class="header">
+<button class="back-btn" onclick="go('dashboard')">←</button>
+<h1>Лекарства</h1>
+</div>
 <div class="screen-content">
 <input id="medInput">
 <button class="btn" onclick="addMed()">Add</button>
@@ -201,57 +215,51 @@ margin-top:10px;
 
 <script>
 
-let state = JSON.parse(localStorage.getItem("myday")) || {
+let data = JSON.parse(localStorage.getItem("myday")) || {
 sleep:0,water:0,steps:0,mood:"😊",med:[]
 };
 
 function save(){
-localStorage.setItem("myday",JSON.stringify(state));
+localStorage.setItem("myday",JSON.stringify(data));
 update();
 }
 
-function go(page){
-
+function go(id){
 document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-document.getElementById(page).classList.add("active");
-
-document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
-
+document.getElementById(id).classList.add("active");
 update();
 }
 
 function saveSleep(){
-state.sleep=document.getElementById("sleepInput").value;
+data.sleep=document.getElementById("sleepInput").value;
 save();
 }
 
 function saveWater(){
-state.water+=parseInt(document.getElementById("waterInput").value||0);
+data.water+=parseInt(document.getElementById("waterInput").value||0);
 save();
 }
 
 function saveSteps(){
-state.steps=document.getElementById("stepsInput").value;
+data.steps=document.getElementById("stepsInput").value;
 save();
 }
 
 function setMood(m){
-state.mood=m;
+data.mood=m;
 save();
 }
 
 function addMed(){
-state.med.push(document.getElementById("medInput").value);
+data.med.push(document.getElementById("medInput").value);
 save();
 }
 
 function update(){
-
-document.getElementById("sleepVal").textContent=state.sleep;
-document.getElementById("waterVal").textContent=state.water;
-document.getElementById("stepsVal").textContent=state.steps;
-document.getElementById("moodVal").textContent=state.mood;
-
+document.getElementById("sleepVal").textContent=data.sleep;
+document.getElementById("waterVal").textContent=data.water;
+document.getElementById("stepsVal").textContent=data.steps;
+document.getElementById("moodVal").textContent=data.mood;
 document.getElementById("date").textContent=new Date().toLocaleDateString();
 }
 
