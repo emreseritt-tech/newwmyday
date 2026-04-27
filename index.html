@@ -3,127 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Мой День - Здоровье</title>
+<title>Мой День</title>
 
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+*{margin:0;padding:0;box-sizing:border-box}
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+body{
+font-family:Segoe UI;
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
-.app-container {
-    width: 100%;
-    max-width: 500px;
-    min-height: 100vh;
-    background: #f5f5f5;
-    box-shadow: 0 0 50px rgba(0,0,0,0.3);
+.app-container{
+width:100%;
+max-width:500px;
+background:#f5f5f5;
+min-height:100vh;
+box-shadow:0 0 40px rgba(0,0,0,.3);
 }
 
-.screen { display: none; min-height: 100vh; }
-.screen.active { display: flex; flex-direction: column; }
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
 
-.header {
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    color: white;
-    padding: 20px;
-    text-align: center;
-    position: relative;
+.header{
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+padding:20px;
+text-align:center;
+position:relative;
 }
 
-.back-btn {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255,255,255,0.2);
-    border: none;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+.back-btn{
+position:absolute;left:10px;top:50%;
+transform:translateY(-50%);
+background:rgba(255,255,255,.2);
+border:none;color:white;
+width:40px;height:40px;border-radius:50%;
 }
 
-.dashboard-grid {
-    display: grid;
-    gap: 15px;
-    padding: 20px;
-    flex: 1;
+.dashboard-grid{padding:20px;display:grid;gap:15px}
+
+.card{
+background:white;
+padding:18px;
+border-radius:15px;
+display:flex;
+gap:15px;
+cursor:pointer;
+border:none;
 }
 
-.card {
-    background: white;
-    border-radius: 20px;
-    padding: 20px;
-    display: flex;
-    gap: 15px;
-    border: none;
-    cursor: pointer;
+.card-icon{font-size:35px}
+
+.bottom-nav{
+display:flex;
+background:white;
+position:sticky;
+bottom:0;
 }
 
-.card-icon { font-size: 40px; }
-
-.bottom-nav {
-    display: flex;
-    background: white;
-    position: sticky;
-    bottom: 0;
+.nav-btn{
+flex:1;
+border:none;
+background:none;
+padding:12px;
+color:#999;
+cursor:pointer;
 }
 
-.nav-btn {
-    flex: 1;
-    border: none;
-    background: none;
-    padding: 12px;
-    color: #999;
+.nav-btn.active{color:#667eea;font-weight:bold}
+
+.screen-content{padding:20px;padding-bottom:80px}
+
+.stat-card{
+background:white;
+padding:20px;
+border-radius:15px;
+margin-bottom:10px;
+text-align:center;
 }
 
-.nav-btn.active { color: #667eea; font-weight: bold; }
+.big-number{font-size:40px;color:#667eea}
 
-.screen-content {
-    padding: 20px;
-    padding-bottom: 80px;
+.btn{
+width:100%;
+padding:15px;
+border:none;
+border-radius:12px;
+background:#667eea;
+color:white;
+cursor:pointer;
+margin-top:10px;
 }
 
-.stat-card {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 10px;
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
 }
-
-.big-number {
-    font-size: 40px;
-    color: #667eea;
-}
-
-.btn {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 15px;
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    color: white;
-}
-
-.toast {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #4CAF50;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    display: none;
-}
-
-.toast.show { display: block; }
 </style>
 </head>
 
@@ -132,154 +112,151 @@ body {
 <div class="app-container">
 
 <!-- DASHBOARD -->
-<div id="dashboard-screen" class="screen active">
-    <div class="header">
-        <h1>🏥 Мой День</h1>
-        <div id="currentDate"></div>
-    </div>
+<div id="dashboard" class="screen active">
+<div class="header">
+<h1>🏥 Мой День</h1>
+<div id="date"></div>
+</div>
 
-    <div class="dashboard-grid">
-        <button class="card" onclick="showScreen('sleep')">
-            <div class="card-icon">😴</div>
-            <div><h3>Сон</h3><p id="sleep-display"></p></div>
-        </button>
+<div class="dashboard-grid">
 
-        <button class="card" onclick="showScreen('water')">
-            <div class="card-icon">💧</div>
-            <div><h3>Вода</h3><p id="water-display"></p></div>
-        </button>
+<button class="card" onclick="go('sleep')">
+<div class="card-icon">😴</div><div>Сон</div>
+</button>
 
-        <button class="card" onclick="showScreen('steps')">
-            <div class="card-icon">👟</div>
-            <div><h3>Шаги</h3><p id="steps-display"></p></div>
-        </button>
+<button class="card" onclick="go('water')">
+<div class="card-icon">💧</div><div>Вода</div>
+</button>
 
-        <button class="card" onclick="showScreen('mood')">
-            <div class="card-icon">😊</div>
-            <div><h3>Настроение</h3><p id="mood-display"></p></div>
-        </button>
+<button class="card" onclick="go('steps')">
+<div class="card-icon">👟</div><div>Шаги</div>
+</button>
 
-        <button class="card" onclick="showScreen('medicine')">
-            <div class="card-icon">💊</div>
-            <div><h3>Лекарства</h3><p id="medicine-display"></p></div>
-        </button>
-    </div>
+<button class="card" onclick="go('mood')">
+<div class="card-icon">😊</div><div>Настроение</div>
+</button>
 
-    <div class="bottom-nav">
-        <button class="nav-btn active" onclick="showScreen('dashboard')">🏠</button>
-        <button class="nav-btn" onclick="showScreen('stats')">📊</button>
-        <button class="nav-btn" onclick="showScreen('profile')">👤</button>
-    </div>
+<button class="card" onclick="go('medicine')">
+<div class="card-icon">💊</div><div>Лекарства</div>
+</button>
+
+</div>
+
+<div class="bottom-nav">
+<button class="nav-btn active" onclick="go('dashboard')">🏠</button>
+<button class="nav-btn" onclick="go('stats')">📊</button>
+<button class="nav-btn" onclick="go('profile')">👤</button>
+</div>
 </div>
 
 <!-- SLEEP -->
-<div id="sleep-screen" class="screen">
-<div class="header"><button class="back-btn" onclick="showScreen('dashboard')">←</button><h1>😴 Сон</h1></div>
+<div id="sleep" class="screen">
+<div class="header"><button class="back-btn" onclick="go('dashboard')">←</button><h1>Сон</h1></div>
 <div class="screen-content">
-<div class="stat-card"><div class="big-number" id="sleep-total">0</div></div>
-<input id="sleep-input" type="number">
-<button class="btn" onclick="addSleep()">Save</button>
+<div class="stat-card"><div class="big-number" id="sleepVal">0</div></div>
+<input id="sleepInput" type="number">
+<button class="btn" onclick="saveSleep()">Save</button>
 </div>
 </div>
 
 <!-- WATER -->
-<div id="water-screen" class="screen">
-<div class="header"><button class="back-btn" onclick="showScreen('dashboard')">←</button><h1>💧 Вода</h1></div>
+<div id="water" class="screen">
+<div class="header"><button class="back-btn" onclick="go('dashboard')">←</button><h1>Вода</h1></div>
 <div class="screen-content">
-<div class="stat-card"><div class="big-number" id="water-total">0</div></div>
-<input id="water-input" type="number">
-<button class="btn" onclick="addWaterManual()">Save</button>
+<div class="stat-card"><div class="big-number" id="waterVal">0</div></div>
+<input id="waterInput" type="number">
+<button class="btn" onclick="saveWater()">Save</button>
 </div>
 </div>
 
 <!-- STEPS -->
-<div id="steps-screen" class="screen">
-<div class="header"><button class="back-btn" onclick="showScreen('dashboard')">←</button><h1>👟 Шаги</h1></div>
+<div id="steps" class="screen">
+<div class="header"><button class="back-btn" onclick="go('dashboard')">←</button><h1>Шаги</h1></div>
 <div class="screen-content">
-<div class="stat-card"><div class="big-number" id="steps-total">0</div></div>
-<input id="steps-input" type="number">
-<button class="btn" onclick="addSteps()">Save</button>
+<div class="stat-card"><div class="big-number" id="stepsVal">0</div></div>
+<input id="stepsInput" type="number">
+<button class="btn" onclick="saveSteps()">Save</button>
 </div>
 </div>
 
 <!-- MOOD -->
-<div id="mood-screen" class="screen">
-<div class="header"><button class="back-btn" onclick="showScreen('dashboard')">←</button><h1>😊 Настроение</h1></div>
+<div id="mood" class="screen">
+<div class="header"><button class="back-btn" onclick="go('dashboard')">←</button><h1>Настроение</h1></div>
 <div class="screen-content">
-<div class="stat-card"><div class="big-number" id="mood-current">😊</div></div>
-<button class="btn" onclick="setMood('😊','Good')">😊</button>
+<div class="stat-card"><div class="big-number" id="moodVal">😊</div></div>
+<button class="btn" onclick="setMood('😊')">😊</button>
 </div>
 </div>
 
 <!-- MEDICINE -->
-<div id="medicine-screen" class="screen">
-<div class="header"><button class="back-btn" onclick="showScreen('dashboard')">←</button><h1>💊 Лекарства</h1></div>
+<div id="medicine" class="screen">
+<div class="header"><button class="back-btn" onclick="go('dashboard')">←</button><h1>Лекарства</h1></div>
 <div class="screen-content">
-<input id="med-name">
-<input id="med-time" type="time">
-<button class="btn" onclick="addMedicine()">Add</button>
+<input id="medInput">
+<button class="btn" onclick="addMed()">Add</button>
 </div>
 </div>
 
 </div>
-
-<div class="toast" id="toast"></div>
 
 <script>
-var data = JSON.parse(localStorage.getItem('myday')) || {
-sleep:0, water:0, steps:0, mood:"😊", medicines:[]
+
+let state = JSON.parse(localStorage.getItem("myday")) || {
+sleep:0,water:0,steps:0,mood:"😊",med:[]
 };
 
 function save(){
-localStorage.setItem('myday',JSON.stringify(data));
-updateAll();
+localStorage.setItem("myday",JSON.stringify(state));
+update();
 }
 
-function showScreen(id){
-document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-document.getElementById(id+'-screen').classList.add('active');
-updateAll();
+function go(page){
+
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(page).classList.add("active");
+
+document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+
+update();
 }
 
-function toast(m){
-let t=document.getElementById("toast");
-t.textContent=m;
-t.classList.add("show");
-setTimeout(()=>t.classList.remove("show"),2000);
-}
-
-function addSleep(){
-data.sleep=document.getElementById("sleep-input").value;
-save();toast("Saved");
-}
-
-function addWaterManual(){
-data.water+=parseInt(document.getElementById("water-input").value||0);
+function saveSleep(){
+state.sleep=document.getElementById("sleepInput").value;
 save();
 }
 
-function addSteps(){
-data.steps=document.getElementById("steps-input").value;
+function saveWater(){
+state.water+=parseInt(document.getElementById("waterInput").value||0);
 save();
 }
 
-function setMood(m){data.mood=m;save();}
-
-function addMedicine(){
-data.medicines.push(document.getElementById("med-name").value);
+function saveSteps(){
+state.steps=document.getElementById("stepsInput").value;
 save();
 }
 
-function updateAll(){
-document.getElementById("sleep-display").textContent=data.sleep+"h";
-document.getElementById("water-display").textContent=data.water+"ml";
-document.getElementById("steps-display").textContent=data.steps;
-document.getElementById("mood-display").textContent=data.mood;
-document.getElementById("medicine-display").textContent=data.medicines.length;
-document.getElementById("currentDate").textContent=new Date().toLocaleDateString();
+function setMood(m){
+state.mood=m;
+save();
 }
 
-updateAll();
+function addMed(){
+state.med.push(document.getElementById("medInput").value);
+save();
+}
+
+function update(){
+
+document.getElementById("sleepVal").textContent=state.sleep;
+document.getElementById("waterVal").textContent=state.water;
+document.getElementById("stepsVal").textContent=state.steps;
+document.getElementById("moodVal").textContent=state.mood;
+
+document.getElementById("date").textContent=new Date().toLocaleDateString();
+}
+
+update();
+
 </script>
 
 </body>
