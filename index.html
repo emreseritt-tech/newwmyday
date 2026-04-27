@@ -3,146 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой День</title>
+    <title>Мой День - Здоровье</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 100%; min-height: 100vh;
+        }
+        .app-container {
+            width: 100%; max-width: 500px; margin: 0 auto;
+            min-height: 100vh; background: #f5f5f5;
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+        }
+        .screen { display: none; min-height: 100vh; background: #f5f5f5; }
+        .screen.active { display: flex; flex-direction: column; }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 20px; text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative;
+        }
+        .header h1 { font-size: 24px; margin-bottom: 5px; }
+        .date { font-size: 14px; opacity: 0.9; }
+        .back-btn {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.2); border: none; color: white;
+            font-size: 24px; cursor: pointer; width: 40px; height: 40px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .dashboard-grid { display: grid; gap: 15px; padding: 20px; flex: 1; overflow-y: auto; }
+        .card {
+            background: white; border-radius: 20px; padding: 20px;
+            display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1); cursor: pointer;
+            border: none; width: 100%; text-align: left;
+        }
+        .card:active { transform: scale(0.97); }
+        .card-icon {
+            font-size: 40px; width: 65px; height: 65px;
+            display: flex; align-items: center; justify-content: center;
+            background: #f0f0f0; border-radius: 18px; flex-shrink: 0;
+        }
+        .card-content h3 { font-size: 18px; color: #333; margin-bottom: 5px; }
+        .card-content p { color: #888; font-size: 14px; }
+        .bottom-nav {
+            display: flex; background: white;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 100;
+            position: sticky; bottom: 0;
+        }
+        .nav-btn {
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            padding: 12px; background: none; border: none; cursor: pointer;
+            color: #999; font-size: 11px;
+        }
+        .nav-btn.active { color: #667eea; font-weight: bold; }
+        .nav-btn .icon { font-size: 24px; margin-bottom: 3px; }
+        .screen-content {
+            padding: 20px; padding-bottom: 80px; flex: 1; overflow-y: auto;
+        }
+        .screen-content h2 { font-size: 20px; color: #333; margin: 20px 0 15px; }
+        .stat-card {
+            background: white; border-radius: 15px; padding: 20px;
+            margin-bottom: 15px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); text-align: center;
+        }
+        .big-number { font-size: 48px; font-weight: bold; color: #667eea; }
+        .unit { font-size: 16px; color: #999; }
+        .btn {
+            display: block; width: 100%; padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 15px; font-size: 16px;
+            cursor: pointer; margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-small {
+            padding: 12px 20px; font-size: 14px; margin: 4px;
+            display: inline-block; width: auto;
+        }
+        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+        .mood-btn {
+            background: white; border: 3px solid #e0e0e0; border-radius: 15px;
+            padding: 20px; font-size: 40px; cursor: pointer; aspect-ratio: 1;
+        }
+        .mood-btn:active { border-color: #667eea; transform: scale(0.9); }
+        input[type="number"], input[type="text"], input[type="time"] {
+            width: 100%; padding: 15px; border: 2px solid #e0e0e0;
+            border-radius: 10px; font-size: 16px; margin-bottom: 8px;
+        }
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #4CAF50; color: white; padding: 18px 30px;
+            border-radius: 12px; font-size: 16px; z-index: 1000; display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .toast.show { display: block; animation: slideIn 0.3s; }
+        @keyframes slideIn {
+            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        .history-list {
+            background: white; border-radius: 12px; overflow: hidden;
+            margin: 10px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .history-item {
+            padding: 15px 20px; border-bottom: 1px solid #f0f0f0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .history-item:last-child { border-bottom: none; }
+        .profile-avatar { text-align: center; font-size: 80px; margin: 20px 0; }
+    </style>
 </head>
-<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f0f4f8;">
+<body>
+<div class="app-container">
 
-<div id="main" style="max-width:500px;margin:0 auto;background:white;min-height:100vh;">
-
-    <div style="background:linear-gradient(135deg,#4A90E2,#764ba2);color:white;padding:25px 20px;text-align:center;">
-        <h1 style="margin:0;font-size:26px;">🏥 Мой День</h1>
-        <p id="tarih" style="margin:5px 0 0;font-size:14px;opacity:0.9;"></p>
+<!-- DASHBOARD -->
+<div id="dashboard" class="screen active">
+    <div class="header">
+        <h1>🏥 Мой День</h1>
+        <div class="date" id="currentDate"></div>
     </div>
-
-    <div style="padding:20px;">
-
-        <div onclick="window.location.href='#sleep'" style="background:#f8f9fa;border-radius:15px;padding:20px;margin-bottom:12px;display:flex;align-items:center;gap:15px;cursor:pointer;border-left:5px solid #4A90E2;">
-            <div style="font-size:40px;">😴</div>
-            <div>
-                <div style="font-size:18px;font-weight:bold;color:#333;">Сон</div>
-                <div id="sleep-val" style="color:#888;">0 часов</div>
-            </div>
-        </div>
-
-        <div onclick="window.location.href='#water'" style="background:#f8f9fa;border-radius:15px;padding:20px;margin-bottom:12px;display:flex;align-items:center;gap:15px;cursor:pointer;border-left:5px solid #4A90E2;">
-            <div style="font-size:40px;">💧</div>
-            <div>
-                <div style="font-size:18px;font-weight:bold;color:#333;">Вода</div>
-                <div id="water-val" style="color:#888;">0 мл</div>
-            </div>
-        </div>
-
-        <div onclick="window.location.href='#steps'" style="background:#f8f9fa;border-radius:15px;padding:20px;margin-bottom:12px;display:flex;align-items:center;gap:15px;cursor:pointer;border-left:5px solid #4A90E2;">
-            <div style="font-size:40px;">👟</div>
-            <div>
-                <div style="font-size:18px;font-weight:bold;color:#333;">Шаги</div>
-                <div id="steps-val" style="color:#888;">0 шагов</div>
-            </div>
-        </div>
-
-        <div onclick="window.location.href='#mood'" style="background:#f8f9fa;border-radius:15px;padding:20px;margin-bottom:12px;display:flex;align-items:center;gap:15px;cursor:pointer;border-left:5px solid #4A90E2;">
-            <div style="font-size:40px;">😊</div>
-            <div>
-                <div style="font-size:18px;font-weight:bold;color:#333;">Настроение</div>
-                <div id="mood-val" style="color:#888;">Отличное</div>
-            </div>
-        </div>
-
-        <div onclick="window.location.href='#medicine'" style="background:#f8f9fa;border-radius:15px;padding:20px;margin-bottom:12px;display:flex;align-items:center;gap:15px;cursor:pointer;border-left:5px solid #4A90E2;">
-            <div style="font-size:40px;">💊</div>
-            <div>
-                <div style="font-size:18px;font-weight:bold;color:#333;">Лекарства</div>
-                <div id="med-val" style="color:#888;">0 активных</div>
-            </div>
-        </div>
-
+    <div class="dashboard-grid">
+        <button class="card" onclick="openScreen('sleep')">
+            <div class="card-icon">😴</div>
+            <div class="card-content"><h3>Сон</h3><p id="sleep-display">0 часов</p></div>
+        </button>
+        <button class="card" onclick="openScreen('water')">
+            <div class="card-icon">💧</div>
+            <div class="card-content"><h3>Вода</h3><p id="water-display">0 мл</p></div>
+        </button>
+        <button class="card" onclick="openScreen('steps')">
+            <div class="card-icon">👟</div>
+            <div class="card-content"><h3>Шаги</h3><p id="steps-display">0 шагов</p></div>
+        </button>
+        <button class="card" onclick="openScreen('mood')">
+            <div class="card-icon">😊</div>
+            <div class="card-content"><h3>Настроение</h3><p id="mood-display">Отличное</p></div>
+        </button>
+        <button class="card" onclick="openScreen('medicine')">
+            <div class="card-icon">💊</div>
+            <div class="card-content"><h3>Лекарства</h3><p id="medicine-display">0 активных</p></div>
+        </button>
     </div>
-
-    <div style="text-align:center;padding:10px;color:#999;font-size:12px;margin-top:20px;">
-        ННГУ им. Лобачевского | Группа 3825Б1ПР3
-    </div>
-
 </div>
 
-<div id="notification" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#4CAF50;color:white;padding:15px 25px;border-radius:10px;font-size:16px;z-index:999;display:none;"></div>
-
+<!-- SCRIPTS -->
 <script>
-// TARIH
-document.getElementById('tarih').textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+var data = JSON.parse(localStorage.getItem('myday')) || {
+    sleep: 0, sleepHistory: [],
+    water: 0, waterHistory: [],
+    steps: 0, stepsHistory: [],
+    mood: '😊', moodName: 'Отличное', moodHistory: [],
+    medicines: [],
+    day: null
+};
 
-// VERILERI YUKLE
-var d = JSON.parse(localStorage.getItem('myday')) || { sleep: 0, water: 0, steps: 0, mood: '😊', meds: [] };
-document.getElementById('sleep-val').textContent = d.sleep + ' часов';
-document.getElementById('water-val').textContent = d.water + ' мл';
-document.getElementById('steps-val').textContent = d.steps + ' шагов';
-document.getElementById('mood-val').textContent = d.mood;
-document.getElementById('med-val').textContent = d.meds.length + ' активных';
-
-// URL DEGISINCE SAYFA YENILE
-window.onhashchange = function() { location.reload(); };
-
-// BILDIRIM
-function notify(msg) {
-    var n = document.getElementById('notification');
-    n.textContent = msg; n.style.display = 'block';
-    setTimeout(function() { n.style.display = 'none'; }, 2000);
+// DAILY RESET FIX
+var today = new Date().toLocaleDateString('ru-RU');
+if (data.day !== today) {
+    data.sleep = 0;
+    data.water = 0;
+    data.steps = 0;
+    data.day = today;
+    localStorage.setItem('myday', JSON.stringify(data));
 }
 
-// HASH KONTROL
-var hash = window.location.hash.substring(1);
+function save(){localStorage.setItem('myday',JSON.stringify(data));updateAll();}
 
-if (hash === 'sleep') {
-    var saat = prompt('Сколько часов вы спали? (0-24)', d.sleep);
-    if (saat !== null && !isNaN(saat) && saat >= 0 && saat <= 24) {
-        d.sleep = parseInt(saat);
-        localStorage.setItem('myday', JSON.stringify(d));
-        notify('✅ Сон: ' + d.sleep + ' часов');
-    }
-    window.location.hash = '';
+function openScreen(name){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    var id = (name==='dashboard')?'dashboard':'dashboard';
+    document.getElementById(name).classList.add('active');
+    updateAll();
 }
 
-if (hash === 'water') {
-    var ml = prompt('Сколько мл воды выпили?', '250');
-    if (ml !== null && !isNaN(ml) && ml > 0) {
-        d.water += parseInt(ml);
-        localStorage.setItem('myday', JSON.stringify(d));
-        notify('✅ +' + ml + ' мл воды');
-    }
-    window.location.hash = '';
+function addSleep(){var v=parseInt(sleepInput.value);if(v>0){data.sleep=v;save();}}
+function addWater(a){data.water+=a;save();}
+function addSteps(){var v=parseInt(stepsInput.value);if(v>0){data.steps=v;save();}}
+function setMood(e,n){data.mood=e;data.moodName=n;save();}
+function addMedicine(){var n=medName.value,t=medTime.value;if(n&&t){data.medicines.push({name:n,time:t});save();}}
+
+function updateAll(){
+    document.getElementById('sleep-display').textContent=data.sleep+' часов';
+    document.getElementById('water-display').textContent=data.water+' мл';
+    document.getElementById('steps-display').textContent=data.steps+' шагов';
+    document.getElementById('mood-display').textContent=data.mood+' '+data.moodName;
+    document.getElementById('medicine-display').textContent=data.medicines.length+' активных';
 }
 
-if (hash === 'steps') {
-    var adim = prompt('Сколько шагов прошли?', d.steps);
-    if (adim !== null && !isNaN(adim) && adim >= 0) {
-        d.steps = parseInt(adim);
-        localStorage.setItem('myday', JSON.stringify(d));
-        notify('✅ Шаги: ' + d.steps);
-    }
-    window.location.hash = '';
-}
-
-if (hash === 'mood') {
-    var mood = prompt('Ваше настроение?\n\n😊 Отличное\n😐 Нормальное\n😢 Грустное\n\nВведите: 1, 2 или 3', '1');
-    if (mood === '1') { d.mood = '😊 Отличное'; notify('✅ Настроение: 😊'); }
-    if (mood === '2') { d.mood = '😐 Нормальное'; notify('✅ Настроение: 😐'); }
-    if (mood === '3') { d.mood = '😢 Грустное'; notify('✅ Настроение: 😢'); }
-    localStorage.setItem('myday', JSON.stringify(d));
-    window.location.hash = '';
-}
-
-if (hash === 'medicine') {
-    var ilac = prompt('Название лекарства:');
-    if (ilac) {
-        var zaman = prompt('Время приёма (например: 09:00):', '09:00');
-        if (zaman) {
-            d.meds.push({ name: ilac, time: zaman });
-            localStorage.setItem('myday', JSON.stringify(d));
-            notify('✅ Добавлено: ' + ilac);
-        }
-    }
-    window.location.hash = '';
-}
+updateAll();
 </script>
-
 </body>
 </html>
