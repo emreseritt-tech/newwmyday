@@ -3,175 +3,798 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой День</title>
+    <title>Мой День - Здоровье</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f0f4f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             max-width: 480px;
             margin: 0 auto;
             min-height: 100vh;
+            position: relative;
         }
-        
+
+        .screen {
+            display: none;
+            min-height: 100vh;
+            background: #f5f5f5;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Header */
         .header {
-            background: #4A90E2;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 20px;
             text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        
-        .header h1 { font-size: 24px; margin-bottom: 5px; }
-        .date { font-size: 14px; opacity: 0.9; }
-        
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Dashboard Cards */
         .dashboard-grid {
             display: grid;
             gap: 15px;
             padding: 20px;
-            padding-bottom: 80px;
         }
-        
+
         .card {
             background: white;
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 20px;
+            padding: 25px;
             display: flex;
             align-items: center;
             gap: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             cursor: pointer;
-            border-left: 4px solid #4A90E2;
+            transition: all 0.3s;
+            border: none;
+            width: 100%;
+            text-align: left;
         }
-        
+
+        .card:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
         .card-icon {
-            font-size: 32px;
-            width: 50px;
-            height: 50px;
+            font-size: 45px;
+            width: 70px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f0f4f8;
-            border-radius: 12px;
+            background: #f0f0f0;
+            border-radius: 20px;
         }
-        
-        .card-content { flex: 1; }
-        .card-content h3 { font-size: 16px; margin-bottom: 5px; color: #2C3E50; }
-        .card-content p { color: #7F8C8D; font-size: 14px; }
-        
+
+        .card-content h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .card-content p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        /* Bottom Navigation */
         .bottom-nav {
-            display: flex;
-            background: white;
-            border-top: 1px solid #e0e6ed;
-            padding: 10px 0;
             position: fixed;
             bottom: 0;
             width: 100%;
             max-width: 480px;
+            display: flex;
+            background: white;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            z-index: 100;
         }
-        
+
         .nav-btn {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            padding: 12px;
             background: none;
             border: none;
-            color: #7F8C8D;
-            font-size: 12px;
             cursor: pointer;
-            padding: 10px;
+            color: #999;
+            font-size: 11px;
+            transition: all 0.3s;
         }
-        
-        .notification {
+
+        .nav-btn.active {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .nav-btn .icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        /* Screen Content */
+        .screen-content {
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        .screen-content h2 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Stats */
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .big-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .unit {
+            font-size: 16px;
+            color: #999;
+        }
+
+        /* Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-small {
+            padding: 12px 20px;
+            font-size: 14px;
+            margin: 5px;
+            display: inline-block;
+            width: auto;
+        }
+
+        /* Mood Buttons */
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .mood-btn {
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 20px;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mood-btn:active {
+            border-color: #667eea;
+            transform: scale(0.9);
+        }
+
+        /* Form Inputs */
+        input[type="number"],
+        input[type="text"],
+        input[type="time"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        /* Notification */
+        .toast {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: #7ED321;
+            background: #4CAF50;
             color: white;
-            padding: 15px 30px;
-            border-radius: 10px;
-            display: none;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 18px;
             z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        
-        .notification.show { display: block; }
+
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-50%) translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* History List */
+        .history-list {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .history-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Profile */
+        .profile-avatar {
+            text-align: center;
+            font-size: 80px;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🏥 Мой День</h1>
-        <div class="date" id="currentDate"></div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="screen active">
+        <div class="header">
+            <h1>🏥 Мой День</h1>
+            <div class="date" id="currentDate"></div>
+        </div>
+
+        <div class="dashboard-grid">
+            <button class="card" onclick="openScreen('sleep')">
+                <div class="card-icon">😴</div>
+                <div class="card-content">
+                    <h3>Сон</h3>
+                    <p id="sleep-display">0 часов</p>
+                </div>
+            </button>
+
+            <button class="card" onclick="openScreen('water')">
+                <div class="card-icon">💧</div>
+                <div class="card-content">
+                    <h3>Вода</h3>
+                    <p id="water-display">0 мл</p>
+                </div>
+            </button>
+
+            <button class="card" onclick="openScreen('steps')">
+                <div class="card-icon">👟</div>
+                <div class="card-content">
+                    <h3>Шаги</h3>
+                    <p id="steps-display">0 шагов</p>
+                </div>
+            </button>
+
+            <button class="card" onclick="openScreen('mood')">
+                <div class="card-icon">😊</div>
+                <div class="card-content">
+                    <h3>Настроение</h3>
+                    <p id="mood-display">Отличное</p>
+                </div>
+            </button>
+
+            <button class="card" onclick="openScreen('medicine')">
+                <div class="card-icon">💊</div>
+                <div class="card-content">
+                    <h3>Лекарства</h3>
+                    <p id="medicine-display">0 активных</p>
+                </div>
+            </button>
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-btn active" onclick="openScreen('dashboard')">
+                <span class="icon">🏠</span> Главная
+            </button>
+            <button class="nav-btn" onclick="openScreen('stats')">
+                <span class="icon">📊</span> Статистика
+            </button>
+            <button class="nav-btn" onclick="openScreen('profile')">
+                <span class="icon">👤</span> Профиль
+            </button>
+        </div>
     </div>
-    
-    <div class="dashboard-grid">
-        <div class="card" onclick="showMessage('Сон')">
-            <div class="card-icon">😴</div>
-            <div class="card-content">
-                <h3>Сон</h3>
-                <p>Отслеживание сна</p>
-            </div>
-        </div>
 
-        <div class="card" onclick="showMessage('Вода')">
-            <div class="card-icon">💧</div>
-            <div class="card-content">
-                <h3>Вода</h3>
-                <p>Потребление воды</p>
-            </div>
+    <!-- SLEEP SCREEN -->
+    <div id="sleep-screen" class="screen">
+        <div class="header">
+            <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+            <h1>😴 Сон</h1>
         </div>
-
-        <div class="card" onclick="showMessage('Шаги')">
-            <div class="card-icon">👟</div>
-            <div class="card-content">
-                <h3>Шаги</h3>
-                <p>Физическая активность</p>
+        <div class="screen-content">
+            <div class="stat-card">
+                <div class="big-number" id="sleep-total">0</div>
+                <div class="unit">часов сегодня</div>
             </div>
-        </div>
-
-        <div class="card" onclick="showMessage('Настроение')">
-            <div class="card-icon">😊</div>
-            <div class="card-content">
-                <h3>Настроение</h3>
-                <p>Эмоциональное состояние</p>
-            </div>
-        </div>
-
-        <div class="card" onclick="showMessage('Лекарства')">
-            <div class="card-icon">💊</div>
-            <div class="card-content">
-                <h3>Лекарства</h3>
-                <p>Напоминания о приёме</p>
+            <h2>Добавить сон</h2>
+            <input type="number" id="sleep-input" placeholder="Часы сна" min="0" max="24">
+            <button class="btn" onclick="addSleep()">💾 Сохранить</button>
+            <h2>История</h2>
+            <div id="sleep-history" class="history-list">
+                <div class="history-item">Нет данных</div>
             </div>
         </div>
     </div>
 
-    <div class="bottom-nav">
-        <button class="nav-btn">🏠<br>Главная</button>
-        <button class="nav-btn">📊<br>Статистика</button>
-        <button class="nav-btn">👤<br>Профиль</button>
+    <!-- WATER SCREEN -->
+    <div id="water-screen" class="screen">
+        <div class="header">
+            <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+            <h1>💧 Вода</h1>
+        </div>
+        <div class="screen-content">
+            <div class="stat-card">
+                <div class="big-number" id="water-total">0</div>
+                <div class="unit">мл сегодня (цель: 2000 мл)</div>
+            </div>
+            <h2>Быстрое добавление</h2>
+            <button class="btn btn-small" onclick="addWater(100)">+100 мл</button>
+            <button class="btn btn-small" onclick="addWater(250)">+250 мл</button>
+            <button class="btn btn-small" onclick="addWater(500)">+500 мл</button>
+            <br><br>
+            <input type="number" id="water-input" placeholder="Другой объем (мл)">
+            <button class="btn" onclick="addWaterManual()">💾 Сохранить</button>
+            <h2>История</h2>
+            <div id="water-history" class="history-list">
+                <div class="history-item">Нет данных</div>
+            </div>
+        </div>
     </div>
 
-    <div class="notification" id="notification">
-        <p id="notification-message"></p>
+    <!-- STEPS SCREEN -->
+    <div id="steps-screen" class="screen">
+        <div class="header">
+            <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+            <h1>👟 Шаги</h1>
+        </div>
+        <div class="screen-content">
+            <div class="stat-card">
+                <div class="big-number" id="steps-total">0</div>
+                <div class="unit">шагов сегодня</div>
+            </div>
+            <h2>Добавить шаги</h2>
+            <input type="number" id="steps-input" placeholder="Количество шагов">
+            <button class="btn" onclick="addSteps()">💾 Сохранить</button>
+            <h2>История</h2>
+            <div id="steps-history" class="history-list">
+                <div class="history-item">Нет данных</div>
+            </div>
+        </div>
     </div>
+
+    <!-- MOOD SCREEN -->
+    <div id="mood-screen" class="screen">
+        <div class="header">
+            <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+            <h1>😊 Настроение</h1>
+        </div>
+        <div class="screen-content">
+            <div class="stat-card">
+                <div class="big-number" id="mood-current">😊</div>
+                <div class="unit">текущее настроение</div>
+            </div>
+            <h2>Как вы себя чувствуете?</h2>
+            <div class="mood-grid">
+                <button class="mood-btn" onclick="setMood('😊','Отличное')">😊</button>
+                <button class="mood-btn" onclick="setMood('😐','Нормальное')">😐</button>
+                <button class="mood-btn" onclick="setMood('😢','Грустное')">😢</button>
+            </div>
+            <h2>История</h2>
+            <div id="mood-history" class="history-list">
+                <div class="history-item">Нет данных</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MEDICINE SCREEN -->
+    <div id="medicine-screen" class="screen">
+        <div class="header">
+            <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+            <h1>💊 Лекарства</h1>
+        </div>
+        <div class="screen-content">
+            <h2>Добавить лекарство</h2>
+            <input type="text" id="med-name" placeholder="Название лекарства">
+            <input type="time" id="med-time" placeholder="Время приёма">
+            <button class="btn" onclick="addMedicine()">💾 Сохранить</button>
+            <h2>Мои лекарства</h2>
+            <div id="medicine-list" class="history-list">
+                <div class="history-item">Нет лекарств</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATS SCREEN -->
+    <div id="stats-screen" class="screen">
+        <div class="header">
+            <h1>📊 Статистика</h1>
+        </div>
+        <div class="screen-content">
+            <div class="stat-card">
+                <h3>😴 Сон</h3>
+                <div class="big-number" id="stats-sleep">0</div>
+                <div class="unit">часов</div>
+            </div>
+            <div class="stat-card">
+                <h3>💧 Вода</h3>
+                <div class="big-number" id="stats-water">0</div>
+                <div class="unit">мл</div>
+            </div>
+            <div class="stat-card">
+                <h3>👟 Шаги</h3>
+                <div class="big-number" id="stats-steps">0</div>
+                <div class="unit">шагов</div>
+            </div>
+            <div class="stat-card">
+                <h3>😊 Настроение</h3>
+                <div class="big-number" id="stats-mood">😊</div>
+                <div class="unit">текущее</div>
+            </div>
+            <div class="stat-card">
+                <h3>💊 Лекарства</h3>
+                <div class="big-number" id="stats-medicine">0</div>
+                <div class="unit">активных</div>
+            </div>
+        </div>
+        <div class="bottom-nav">
+            <button class="nav-btn" onclick="openScreen('dashboard')">
+                <span class="icon">🏠</span> Главная
+            </button>
+            <button class="nav-btn active" onclick="openScreen('stats')">
+                <span class="icon">📊</span> Статистика
+            </button>
+            <button class="nav-btn" onclick="openScreen('profile')">
+                <span class="icon">👤</span> Профиль
+            </button>
+        </div>
+    </div>
+
+    <!-- PROFILE SCREEN -->
+    <div id="profile-screen" class="screen">
+        <div class="header">
+            <h1>👤 Профиль</h1>
+        </div>
+        <div class="screen-content">
+            <div class="profile-avatar">👤</div>
+            <h2>О приложении</h2>
+            <div class="stat-card">
+                <h3>Мой День v1.0</h3>
+                <p>Приложение для отслеживания здоровья</p>
+                <p>ННГУ им. Лобачевского</p>
+                <p>Группа 3825Б1ПР3</p>
+            </div>
+            <button class="btn" onclick="clearAllData()">🗑️ Очистить все данные</button>
+        </div>
+        <div class="bottom-nav">
+            <button class="nav-btn" onclick="openScreen('dashboard')">
+                <span class="icon">🏠</span> Главная
+            </button>
+            <button class="nav-btn" onclick="openScreen('stats')">
+                <span class="icon">📊</span> Статистика
+            </button>
+            <button class="nav-btn active" onclick="openScreen('profile')">
+                <span class="icon">👤</span> Профиль
+            </button>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast" id="toast"></div>
 
     <script>
-        var now = new Date();
-        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('currentDate').textContent = now.toLocaleDateString('ru-RU', options);
-        
-        function showMessage(section) {
-            var notif = document.getElementById('notification');
-            var msg = document.getElementById('notification-message');
-            msg.textContent = '✅ Раздел: ' + section;
-            notif.classList.add('show');
-            setTimeout(function() {
-                notif.classList.remove('show');
-            }, 2000);
+        // ============ DATA ============
+        var data = JSON.parse(localStorage.getItem('myday')) || {
+            sleep: 0,
+            sleepHistory: [],
+            water: 0,
+            waterHistory: [],
+            steps: 0,
+            stepsHistory: [],
+            mood: '😊',
+            moodName: 'Отличное',
+            moodHistory: [],
+            medicines: []
+        };
+
+        function save() {
+            localStorage.setItem('myday', JSON.stringify(data));
+            updateAll();
         }
+
+        // ============ NAVIGATION ============
+        function openScreen(name) {
+            document.querySelectorAll('.screen').forEach(function(s) {
+                s.classList.remove('active');
+            });
+            document.getElementById(name + '-screen').classList.add('active');
+            updateAll();
+        }
+
+        // ============ TOAST ============
+        function toast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(function() {
+                t.classList.remove('show');
+            }, 2500);
+        }
+
+        // ============ DATE ============
+        function updateDate() {
+            var now = new Date();
+            var opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            var el = document.getElementById('currentDate');
+            if (el) el.textContent = now.toLocaleDateString('ru-RU', opts);
+        }
+
+        function getDate() {
+            var now = new Date();
+            return now.toLocaleDateString('ru-RU');
+        }
+
+        // ============ SLEEP ============
+        function addSleep() {
+            var val = parseInt(document.getElementById('sleep-input').value);
+            if (val && val > 0) {
+                data.sleep = val;
+                data.sleepHistory.unshift({ date: getDate(), hours: val });
+                document.getElementById('sleep-input').value = '';
+                save();
+                toast('✅ Сон сохранен: ' + val + ' ч');
+            }
+        }
+
+        // ============ WATER ============
+        function addWater(amount) {
+            data.water += amount;
+            data.waterHistory.unshift({ date: getDate(), amount: amount });
+            save();
+            toast('✅ +' + amount + ' мл воды');
+        }
+
+        function addWaterManual() {
+            var val = parseInt(document.getElementById('water-input').value);
+            if (val && val > 0) {
+                addWater(val);
+                document.getElementById('water-input').value = '';
+            }
+        }
+
+        // ============ STEPS ============
+        function addSteps() {
+            var val = parseInt(document.getElementById('steps-input').value);
+            if (val && val > 0) {
+                data.steps = val;
+                data.stepsHistory.unshift({ date: getDate(), steps: val });
+                document.getElementById('steps-input').value = '';
+                save();
+                toast('✅ Шаги сохранены: ' + val);
+            }
+        }
+
+        // ============ MOOD ============
+        function setMood(emoji, name) {
+            data.mood = emoji;
+            data.moodName = name;
+            data.moodHistory.unshift({ date: getDate(), mood: emoji, name: name });
+            save();
+            toast('✅ Настроение: ' + emoji + ' ' + name);
+        }
+
+        // ============ MEDICINE ============
+        function addMedicine() {
+            var name = document.getElementById('med-name').value.trim();
+            var time = document.getElementById('med-time').value;
+            if (name && time) {
+                data.medicines.push({ name: name, time: time });
+                document.getElementById('med-name').value = '';
+                document.getElementById('med-time').value = '';
+                save();
+                toast('✅ Лекарство добавлено: ' + name);
+            }
+        }
+
+        function deleteMedicine(index) {
+            var name = data.medicines[index].name;
+            data.medicines.splice(index, 1);
+            save();
+            toast('🗑️ Удалено: ' + name);
+        }
+
+        // ============ UPDATE UI ============
+        function updateAll() {
+            updateDate();
+
+            // Dashboard
+            var sd = document.getElementById('sleep-display');
+            if (sd) sd.textContent = data.sleep + ' часов';
+
+            var wd = document.getElementById('water-display');
+            if (wd) wd.textContent = data.water + ' мл';
+
+            var std = document.getElementById('steps-display');
+            if (std) std.textContent = data.steps + ' шагов';
+
+            var md = document.getElementById('mood-display');
+            if (md) md.textContent = data.mood + ' ' + data.moodName;
+
+            var medd = document.getElementById('medicine-display');
+            if (medd) medd.textContent = data.medicines.length + ' активных';
+
+            // Sleep screen
+            var st = document.getElementById('sleep-total');
+            if (st) st.textContent = data.sleep;
+
+            var sh = document.getElementById('sleep-history');
+            if (sh) {
+                if (data.sleepHistory.length === 0) {
+                    sh.innerHTML = '<div class="history-item">Нет данных</div>';
+                } else {
+                    sh.innerHTML = data.sleepHistory.map(function(item) {
+                        return '<div class="history-item"><span>' + item.date + '</span><span>' + item.hours + ' ч</span></div>';
+                    }).join('');
+                }
+            }
+
+            // Water screen
+            var wt = document.getElementById('water-total');
+            if (wt) wt.textContent = data.water;
+
+            var wh = document.getElementById('water-history');
+            if (wh) {
+                if (data.waterHistory.length === 0) {
+                    wh.innerHTML = '<div class="history-item">Нет данных</div>';
+                } else {
+                    wh.innerHTML = data.waterHistory.map(function(item) {
+                        return '<div class="history-item"><span>' + item.date + '</span><span>' + item.amount + ' мл</span></div>';
+                    }).join('');
+                }
+            }
+
+            // Steps screen
+            var stt = document.getElementById('steps-total');
+            if (stt) stt.textContent = data.steps;
+
+            var sth = document.getElementById('steps-history');
+            if (sth) {
+                if (data.stepsHistory.length === 0) {
+                    sth.innerHTML = '<div class="history-item">Нет данных</div>';
+                } else {
+                    sth.innerHTML = data.stepsHistory.map(function(item) {
+                        return '<div class="history-item"><span>' + item.date + '</span><span>' + item.steps + ' шагов</span></div>';
+                    }).join('');
+                }
+            }
+
+            // Mood screen
+            var mc = document.getElementById('mood-current');
+            if (mc) mc.textContent = data.mood;
+
+            var mh = document.getElementById('mood-history');
+            if (mh) {
+                if (data.moodHistory.length === 0) {
+                    mh.innerHTML = '<div class="history-item">Нет данных</div>';
+                } else {
+                    mh.innerHTML = data.moodHistory.map(function(item) {
+                        return '<div class="history-item"><span>' + item.date + '</span><span>' + item.mood + ' ' + item.name + '</span></div>';
+                    }).join('');
+                }
+            }
+
+            // Medicine screen
+            var ml = document.getElementById('medicine-list');
+            if (ml) {
+                if (data.medicines.length === 0) {
+                    ml.innerHTML = '<div class="history-item">Нет лекарств</div>';
+                } else {
+                    ml.innerHTML = data.medicines.map(function(med, i) {
+                        return '<div class="history-item"><span><strong>' + med.name + '</strong><br><small>' + med.time + '</small></span><button class="btn btn-small" onclick="deleteMedicine(' + i + ')" style="background:red;">🗑️</button></div>';
+                    }).join('');
+                }
+            }
+
+            // Stats screen
+            var ss = document.getElementById('stats-sleep');
+            if (ss) ss.textContent = data.sleep;
+            var sw = document.getElementById('stats-water');
+            if (sw) sw.textContent = data.water;
+            var sst = document.getElementById('stats-steps');
+            if (sst) sst.textContent = data.steps;
+            var sm = document.getElementById('stats-mood');
+            if (sm) sm.textContent = data.mood;
+            var sme = document.getElementById('stats-medicine');
+            if (sme) sme.textContent = data.medicines.length;
+        }
+
+        function clearAllData() {
+            if (confirm('Удалить все данные?')) {
+                data = {
+                    sleep: 0,
+                    sleepHistory: [],
+                    water: 0,
+                    waterHistory: [],
+                    steps: 0,
+                    stepsHistory: [],
+                    mood: '😊',
+                    moodName: 'Отличное',
+                    moodHistory: [],
+                    medicines: []
+                };
+                save();
+                toast('🗑️ Все данные удалены');
+            }
+        }
+
+        // ============ INIT ============
+        updateAll();
     </script>
 </body>
 </html>
