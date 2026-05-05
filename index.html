@@ -2,124 +2,197 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Мой День - Здоровье</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Здоровье+ | QR Медицина</title>
+<!-- HTML5 QR Code library -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', Roboto, system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+    background: linear-gradient(135deg, #1e2a5e 0%, #2b3b6e 100%);
     width: 100%; min-height: 100vh;
 }
 .app-container {
     width: 100%; max-width: 500px; margin: 0 auto;
-    min-height: 100vh; background: #f5f5f5;
-    box-shadow: 0 0 50px rgba(0,0,0,0.3);
+    min-height: 100vh; background: #f8fafc;
+    box-shadow: 0 0 35px rgba(0,0,0,0.25);
 }
-.screen { display: none; min-height: 100vh; background: #f5f5f5; }
+.screen { display: none; min-height: 100vh; background: #f8fafc; }
 .screen.active { display: flex; flex-direction: column; }
 .header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white; padding: 20px; text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative;
+    background: linear-gradient(135deg, #2c3e66 0%, #1a2a48 100%);
+    color: white; padding: 22px 20px; text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); position: relative;
 }
-.header h1 { font-size: 24px; margin-bottom: 5px; }
-.date { font-size: 14px; opacity: 0.9; }
+.header h1 { font-size: 24px; letter-spacing: -0.3px; font-weight: 600; margin-bottom: 5px; }
+.date { font-size: 13px; opacity: 0.85; font-weight: 400; }
 .back-btn {
-    position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+    position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
     background: rgba(255,255,255,0.2); border: none; color: white;
-    font-size: 24px; cursor: pointer; width: 40px; height: 40px;
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; cursor: pointer; width: 40px; height: 40px;
+    border-radius: 30px; display: flex; align-items: center; justify-content: center;
+    transition: 0.2s;
 }
-.dashboard-grid { display: grid; gap: 15px; padding: 20px; flex: 1; overflow-y: auto; }
+.back-btn:active { background: rgba(255,255,255,0.4); transform: translateY(-50%) scale(0.96);}
+.dashboard-grid { display: grid; gap: 16px; padding: 20px; flex: 1; overflow-y: auto; }
 .card {
-    background: white; border-radius: 20px; padding: 20px;
-    display: flex; align-items: center; gap: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1); cursor: pointer;
-    border: none; width: 100%; text-align: left;
+    background: white; border-radius: 28px; padding: 18px 20px;
+    display: flex; align-items: center; gap: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05); cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.03); transition: all 0.2s;
 }
-.card:active { transform: scale(0.97); }
+.card:active { transform: scale(0.97); background: #fefefe; }
 .card-icon {
-    font-size: 40px; width: 65px; height: 65px;
+    font-size: 42px; width: 70px; height: 70px;
     display: flex; align-items: center; justify-content: center;
-    background: #f0f0f0; border-radius: 18px; flex-shrink: 0;
+    background: #eef2ff; border-radius: 24px; flex-shrink: 0;
 }
-.card-content h3 { font-size: 18px; color: #333; margin-bottom: 5px; }
-.card-content p { color: #888; font-size: 14px; }
+.card-content h3 { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
+.card-content p { color: #5b6e8c; font-size: 14px; font-weight: 500; }
 .bottom-nav {
     display: flex; background: white;
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 100;
-    position: sticky; bottom: 0;
+    box-shadow: 0 -5px 18px rgba(0,0,0,0.06); z-index: 100;
+    border-top: 1px solid #eef2f6;
 }
 .nav-btn {
     flex: 1; display: flex; flex-direction: column; align-items: center;
-    padding: 12px; background: none; border: none; cursor: pointer;
-    color: #999; font-size: 11px;
+    padding: 12px 5px; background: none; border: none; cursor: pointer;
+    color: #8e9aaf; font-size: 12px; font-weight: 500;
+    transition: 0.2s;
 }
-.nav-btn.active { color: #667eea; font-weight: bold; }
-.nav-btn .icon { font-size: 24px; margin-bottom: 3px; }
+.nav-btn.active { color: #2c3e66; font-weight: 700; }
+.nav-btn .icon { font-size: 26px; margin-bottom: 4px; }
 .screen-content {
-    padding: 20px; padding-bottom: 80px; flex: 1; overflow-y: auto;
+    padding: 22px 18px; padding-bottom: 80px; flex: 1; overflow-y: auto;
 }
-.screen-content h2 { font-size: 20px; color: #333; margin: 20px 0 15px; }
+.screen-content h2 { font-size: 20px; font-weight: 700; color: #0f172a; margin: 20px 0 12px 0; letter-spacing: -0.2px; }
 .stat-card {
-    background: white; border-radius: 15px; padding: 20px;
-    margin-bottom: 15px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); text-align: center;
+    background: white; border-radius: 28px; padding: 20px;
+    margin-bottom: 18px; box-shadow: 0 6px 14px rgba(0,0,0,0.03); border: 1px solid #eef2ff;
+    text-align: center;
 }
-.big-number { font-size: 48px; font-weight: bold; color: #667eea; }
-.unit { font-size: 16px; color: #999; }
+.big-number { font-size: 48px; font-weight: 800; color: #2c3e66; line-height: 1.1; }
+.unit { font-size: 15px; color: #5f6c84; margin-top: 5px; }
 .btn {
-    display: block; width: 100%; padding: 15px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white; border: none; border-radius: 15px; font-size: 16px;
-    cursor: pointer; margin-top: 10px;
-    box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+    display: block; width: 100%; padding: 14px;
+    background: linear-gradient(105deg, #2c3e66 0%, #1f2f50 100%);
+    color: white; border: none; border-radius: 60px; font-size: 16px;
+    font-weight: 600; cursor: pointer; margin-top: 12px;
+    box-shadow: 0 4px 12px rgba(28, 45, 75, 0.25); transition: 0.1s;
 }
-.btn:active { transform: scale(0.97); }
+.btn:active { transform: scale(0.97); background: #1f2f50; }
 .btn-small {
-    padding: 12px 20px; font-size: 14px; margin: 4px;
-    display: inline-block; width: auto;
+    padding: 10px 16px; font-size: 14px; margin: 4px;
+    display: inline-block; width: auto; box-shadow: none;
+    border-radius: 40px;
 }
-.mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
-.mood-btn {
-    background: white; border: 3px solid #e0e0e0; border-radius: 15px;
-    padding: 20px; font-size: 40px; cursor: pointer; aspect-ratio: 1;
+.btn-outline {
+    background: white; color: #2c3e66; border: 1.5px solid #cbd5e1;
+    box-shadow: none;
 }
-.mood-btn:active { border-color: #667eea; transform: scale(0.9); }
-input[type="number"], input[type="text"], input[type="time"] {
-    width: 100%; padding: 15px; border: 2px solid #e0e0e0;
-    border-radius: 10px; font-size: 16px; margin-bottom: 8px;
+.btn-outline:active { background: #f1f5f9; }
+.med-grid-item {
+    background: white; border-radius: 24px; padding: 18px; margin-bottom: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e9eef3;
+    transition: 0.1s;
 }
-.toast {
-    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-    background: #4CAF50; color: white; padding: 18px 30px;
-    border-radius: 12px; font-size: 16px; z-index: 1000; display: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-.toast.show { display: block; animation: slideIn 0.3s; }
-@keyframes slideIn {
-    from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
-    to { transform: translateX(-50%) translateY(0); opacity: 1; }
-}
+.med-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.med-name { font-size: 18px; font-weight: 800; color: #0f172a; }
+.med-badge { background: #eef2ff; padding: 4px 12px; border-radius: 40px; font-size: 13px; font-weight: 500; color: #2c3e66; }
+.med-details { font-size: 14px; color: #475569; margin: 10px 0; display: flex; gap: 16px; flex-wrap: wrap; }
+.today-status { font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; background: #f1f5f9; padding: 6px 14px; border-radius: 40px; width: fit-content; margin: 8px 0 12px; }
+.status-taken { color: #0f7b3a; background: #e0f2e9; }
+.status-missed { color: #b91c1c; background: #fee2e2; }
+.med-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; align-items: center; }
 .history-list {
-    background: white; border-radius: 12px; overflow: hidden;
-    margin: 10px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    background: white; border-radius: 24px; overflow: hidden;
+    margin: 12px 0; box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 }
 .history-item {
-    padding: 15px 20px; border-bottom: 1px solid #f0f0f0;
+    padding: 14px 18px; border-bottom: 1px solid #eff3f8;
     display: flex; justify-content: space-between; align-items: center;
 }
-.history-item:last-child { border-bottom: none; }
-.profile-avatar { text-align: center; font-size: 80px; margin: 20px 0; }
+.profile-avatar { text-align: center; font-size: 82px; margin: 20px 0; }
+input, select {
+    width: 100%; padding: 14px 16px; border: 1.5px solid #e2e8f0;
+    border-radius: 60px; font-size: 15px; margin-bottom: 12px;
+    background: white; transition: 0.2s;
+}
+input:focus { outline: none; border-color: #2c3e66; box-shadow: 0 0 0 3px rgba(44,62,102,0.2); }
+.toast {
+    position: fixed; top: 22px; left: 50%; transform: translateX(-50%);
+    background: #1e2a3a; color: white; padding: 14px 24px;
+    border-radius: 60px; font-size: 15px; z-index: 1200; display: none;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.3); backdrop-filter: blur(4px);
+    font-weight: 500;
+}
+.toast.show { display: block; animation: slideIn 0.25s ease; }
+@keyframes slideIn {
+    from { transform: translateX(-50%) translateY(-70px); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+/* QR MODAL STYLES */
+.qr-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    backdrop-filter: blur(6px);
+}
+.qr-modal.active {
+    display: flex;
+}
+.qr-container {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 25px 40px rgba(0,0,0,0.3);
+}
+.qr-header {
+    background: #1f2f50;
+    padding: 16px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+.qr-header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+}
+#qr-reader {
+    width: 100%;
+    padding: 15px;
+    background: #000;
+    min-height: 300px;
+}
+.qr-info {
+    padding: 16px;
+    background: #f8fafc;
+    text-align: center;
+    font-size: 14px;
+    border-top: 1px solid #e2e8f0;
+}
 </style>
 </head>
 <body>
 <div class="app-container">
 
-<!-- DASHBOARD -->
+<!-- DASHBOARD SCREEN -->
 <div id="dashboard-screen" class="screen active">
     <div class="header">
-        <h1>🏥 Мой День</h1>
+        <h1>💙 Мой День</h1>
         <div class="date" id="currentDate"></div>
     </div>
     <div class="dashboard-grid">
@@ -135,13 +208,9 @@ input[type="number"], input[type="text"], input[type="time"] {
             <div class="card-icon">👟</div>
             <div class="card-content"><h3>Шаги</h3><p id="steps-display">0 шагов</p></div>
         </button>
-        <button class="card" onclick="openScreen('mood')">
-            <div class="card-icon">😊</div>
-            <div class="card-content"><h3>Настроение</h3><p id="mood-display">Отличное</p></div>
-        </button>
         <button class="card" onclick="openScreen('medicine')">
             <div class="card-icon">💊</div>
-            <div class="card-content"><h3>Лекарства</h3><p id="medicine-display">0 активных</p></div>
+            <div class="card-content"><h3>Лекарства</h3><p id="medicine-display">0 препаратов</p></div>
         </button>
     </div>
     <div class="bottom-nav">
@@ -151,28 +220,22 @@ input[type="number"], input[type="text"], input[type="time"] {
     </div>
 </div>
 
-<!-- SLEEP -->
+<!-- SLEEP SCREEN -->
 <div id="sleep-screen" class="screen">
-    <div class="header">
-        <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-        <h1>😴 Сон</h1>
-    </div>
+    <div class="header"><button class="back-btn" onclick="openScreen('dashboard')">←</button><h1>😴 Сон</h1></div>
     <div class="screen-content">
         <div class="stat-card"><div class="big-number" id="sleep-total">0</div><div class="unit">часов сегодня</div></div>
         <h2>Добавить сон</h2>
-        <input type="number" id="sleep-input" placeholder="Часы сна" min="0" max="24">
+        <input type="number" id="sleep-input" placeholder="Часы сна" min="0" max="24" step="0.5">
         <button class="btn" onclick="addSleep()">💾 Сохранить</button>
-        <h2>История</h2>
+        <h2>История сна</h2>
         <div id="sleep-history" class="history-list"><div class="history-item">Нет данных</div></div>
     </div>
 </div>
 
-<!-- WATER -->
+<!-- WATER SCREEN -->
 <div id="water-screen" class="screen">
-    <div class="header">
-        <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-        <h1>💧 Вода</h1>
-    </div>
+    <div class="header"><button class="back-btn" onclick="openScreen('dashboard')">←</button><h1>💧 Вода</h1></div>
     <div class="screen-content">
         <div class="stat-card"><div class="big-number" id="water-total">0</div><div class="unit">мл сегодня (цель: 2000 мл)</div></div>
         <h2>Быстрое добавление</h2>
@@ -181,72 +244,58 @@ input[type="number"], input[type="text"], input[type="time"] {
         <button class="btn btn-small" onclick="addWater(500)">+500 мл</button>
         <br><br>
         <input type="number" id="water-input" placeholder="Другой объем (мл)">
-        <button class="btn" onclick="addWaterManual()">💾 Сохранить</button>
-        <h2>История</h2>
+        <button class="btn" onclick="addWaterManual()">💾 Добавить</button>
+        <h2>История воды</h2>
         <div id="water-history" class="history-list"><div class="history-item">Нет данных</div></div>
     </div>
 </div>
 
-<!-- STEPS -->
+<!-- STEPS SCREEN -->
 <div id="steps-screen" class="screen">
-    <div class="header">
-        <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-        <h1>👟 Шаги</h1>
-    </div>
+    <div class="header"><button class="back-btn" onclick="openScreen('dashboard')">←</button><h1>👟 Шаги</h1></div>
     <div class="screen-content">
         <div class="stat-card"><div class="big-number" id="steps-total">0</div><div class="unit">шагов сегодня</div></div>
         <h2>Добавить шаги</h2>
         <input type="number" id="steps-input" placeholder="Количество шагов">
         <button class="btn" onclick="addSteps()">💾 Сохранить</button>
-        <h2>История</h2>
+        <h2>История шагов</h2>
         <div id="steps-history" class="history-list"><div class="history-item">Нет данных</div></div>
     </div>
 </div>
 
-<!-- MOOD -->
-<div id="mood-screen" class="screen">
-    <div class="header">
-        <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-        <h1>😊 Настроение</h1>
-    </div>
-    <div class="screen-content">
-        <div class="stat-card"><div class="big-number" id="mood-current">😊</div><div class="unit">текущее настроение</div></div>
-        <h2>Как вы себя чувствуете?</h2>
-        <div class="mood-grid">
-            <button class="mood-btn" onclick="setMood('😊','Отличное')">😊</button>
-            <button class="mood-btn" onclick="setMood('😐','Нормальное')">😐</button>
-            <button class="mood-btn" onclick="setMood('😢','Грустное')">😢</button>
-        </div>
-        <h2>История</h2>
-        <div id="mood-history" class="history-list"><div class="history-item">Нет данных</div></div>
-    </div>
-</div>
-
-<!-- MEDICINE -->
+<!-- MEDICINE SCREEN with QR -->
 <div id="medicine-screen" class="screen">
-    <div class="header">
-        <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-        <h1>💊 Лекарства</h1>
-    </div>
+    <div class="header"><button class="back-btn" onclick="openScreen('dashboard')">←</button><h1>💊 Лекарства + QR</h1></div>
     <div class="screen-content">
-        <h2>Добавить лекарство</h2>
-        <input type="text" id="med-name" placeholder="Название лекарства">
-        <input type="time" id="med-time" placeholder="Время приёма">
-        <button class="btn" onclick="addMedicine()">💾 Сохранить</button>
-        <h2>Мои лекарства</h2>
-        <div id="medicine-list" class="history-list"><div class="history-item">Нет лекарств</div></div>
+        <div class="stat-card">
+            <div class="big-number" id="med-today-count">0</div>
+            <div class="unit">приёмов сегодня</div>
+        </div>
+        
+        <h2>➕ Добавить лекарство</h2>
+        <input type="text" id="med-name" placeholder="Название (например, Парацетамол)" autocomplete="off">
+        <input type="text" id="med-dosage" placeholder="Дозировка (например, 500мг / 1 таб.)" autocomplete="off">
+        <input type="time" id="med-time" placeholder="Время приёма (опционально)">
+        <button class="btn" onclick="addNewMedicine()">💾 Сохранить вручную</button>
+        <button class="btn btn-outline" id="qrScanBtn" style="margin-top: 8px;">📷 Сканировать QR-код (быстрое добавление)</button>
+        
+        <h2>📋 Мои лекарства</h2>
+        <div id="medicine-list-container" class="medicine-list-area">-- загрузка --</div>
+        
+        <h2>📜 История приёмов</h2>
+        <div id="intake-history-list" class="history-list"><div class="history-item">Нет записей</div></div>
     </div>
 </div>
 
-<!-- STATS -->
+<!-- STATS SCREEN -->
 <div id="stats-screen" class="screen">
     <div class="header"><h1>📊 Статистика</h1></div>
     <div class="screen-content">
-        <div class="stat-card"><h3>😴 Сон</h3><div class="big-number" id="stats-sleep">0</div><div class="unit">часов</div></div>
+        <div class="stat-card"><h3>😴 Сон (сегодня)</h3><div class="big-number" id="stats-sleep">0</div><div class="unit">часов</div></div>
         <div class="stat-card"><h3>💧 Вода</h3><div class="big-number" id="stats-water">0</div><div class="unit">мл</div></div>
         <div class="stat-card"><h3>👟 Шаги</h3><div class="big-number" id="stats-steps">0</div><div class="unit">шагов</div></div>
-        <div class="stat-card"><h3>😊 Настроение</h3><div class="big-number" id="stats-mood">😊</div><div class="unit">текущее</div></div>
-        <div class="stat-card"><h3>💊 Лекарства</h3><div class="big-number" id="stats-medicine">0</div><div class="unit">активных</div></div>
+        <div class="stat-card"><h3>💊 Лекарства</h3><div class="big-number" id="stats-medicine-count">0</div><div class="unit">активных препаратов</div></div>
+        <div class="stat-card"><h3>✅ Приёмы сегодня</h3><div class="big-number" id="stats-today-intakes">0</div><div class="unit">зафиксированных приёмов</div></div>
     </div>
     <div class="bottom-nav">
         <button class="nav-btn" onclick="openScreen('dashboard')"><span class="icon">🏠</span> Главная</button>
@@ -255,16 +304,17 @@ input[type="number"], input[type="text"], input[type="time"] {
     </div>
 </div>
 
-<!-- PROFILE -->
+<!-- PROFILE SCREEN -->
 <div id="profile-screen" class="screen">
     <div class="header"><h1>👤 Профиль</h1></div>
     <div class="screen-content">
-        <div class="profile-avatar">👤</div>
+        <div class="profile-avatar">💊❤️</div>
         <div class="stat-card">
-            <h3>Мой День v1.0</h3>
-            <p>Приложение для отслеживания здоровья</p>
+            <h3>Мой День — Pro + QR</h3>
+            <p>Трекинг здоровья + QR-код для лекарств</p>
             <p>ННГУ им. Лобачевского</p>
             <p>Группа 3825Б1ПР3</p>
+            <p style="margin-top:10px;">✨ Сканируйте QR с упаковки или рецепта</p>
         </div>
         <button class="btn" onclick="clearAllData()">🗑️ Очистить все данные</button>
     </div>
@@ -275,164 +325,352 @@ input[type="number"], input[type="text"], input[type="time"] {
     </div>
 </div>
 
-</div><!-- app-container -->
+<!-- QR MODAL -->
+<div id="qrModal" class="qr-modal">
+    <div class="qr-container">
+        <div class="qr-header">
+            <span>📷 Наведите камеру на QR-код</span>
+            <button id="closeQrModalBtn">&times;</button>
+        </div>
+        <div id="qr-reader"></div>
+        <div class="qr-info">
+            🔍 Ожидание сканирования... (код должен содержать: Название|Дозировка|Время)<br>
+            Пример: <strong>Аспирин|500мг|08:00</strong>
+        </div>
+    </div>
+</div>
 
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
-var data = JSON.parse(localStorage.getItem('myday')) || {
+// ---------- DATA MODEL (NO MOOD) ----------
+let appData = {
     sleep: 0, sleepHistory: [],
     water: 0, waterHistory: [],
     steps: 0, stepsHistory: [],
-    mood: '😊', moodName: 'Отличное', moodHistory: [],
-    medicines: []
+    medicines: [],
+    medicineIntakes: []
 };
 
-function save() { localStorage.setItem('myday', JSON.stringify(data)); updateAll(); }
+let html5QrCode = null;
+let qrScannerActive = false;
 
-function openScreen(name) {
-    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-    var target = document.getElementById(name + '-screen');
-    if (target) {
-        target.classList.add('active');
+function loadData() {
+    const raw = localStorage.getItem('myday_health_plus');
+    if (raw) {
+        try {
+            const saved = JSON.parse(raw);
+            appData.sleep = saved.sleep ?? 0;
+            appData.sleepHistory = Array.isArray(saved.sleepHistory) ? saved.sleepHistory : [];
+            appData.water = saved.water ?? 0;
+            appData.waterHistory = Array.isArray(saved.waterHistory) ? saved.waterHistory : [];
+            appData.steps = saved.steps ?? 0;
+            appData.stepsHistory = Array.isArray(saved.stepsHistory) ? saved.stepsHistory : [];
+            appData.medicines = (saved.medicines && Array.isArray(saved.medicines)) ? saved.medicines.map(m => ({ ...m, id: m.id || Date.now() + Math.random() })) : [];
+            appData.medicineIntakes = Array.isArray(saved.medicineIntakes) ? saved.medicineIntakes : [];
+        } catch(e) { resetDefaultData(); }
+    } else {
+        resetDefaultData();
     }
+    saveToLocal();
+}
+
+function resetDefaultData() {
+    appData = {
+        sleep: 0, sleepHistory: [],
+        water: 0, waterHistory: [],
+        steps: 0, stepsHistory: [],
+        medicines: [
+            { id: 1001, name: "Витамин D", dosage: "2000 МЕ", time: "09:00" },
+            { id: 1002, name: "Магний", dosage: "400 мг", time: "20:00" }
+        ],
+        medicineIntakes: []
+    };
+}
+
+function saveToLocal() {
+    localStorage.setItem('myday_health_plus', JSON.stringify(appData));
+}
+
+function getTodayStr() { return new Date().toLocaleDateString('ru-RU'); }
+function getCurrentTimeStr() { return new Date().toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' }); }
+
+// QR SCAN LOGIC
+function startQrScanner() {
+    const modal = document.getElementById('qrModal');
+    modal.classList.add('active');
+    const qrReaderDiv = document.getElementById('qr-reader');
+    qrReaderDiv.innerHTML = ''; // clear
+    if (html5QrCode) {
+        try { html5QrCode.stop().catch(e=>{}); } catch(e) {}
+    }
+    html5QrCode = new Html5Qrcode("qr-reader");
+    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    html5QrCode.start({ facingMode: "environment" }, config, (decodedText) => {
+        // success
+        handleQrResult(decodedText);
+        stopQrScanner();
+        modal.classList.remove('active');
+        toast("✅ QR-код распознан");
+    }, (error) => {
+        // continue scanning, ignore errors
+        console.log("scanning...", error);
+    }).catch(err => {
+        toast("Ошибка камеры: " + err);
+        modal.classList.remove('active');
+    });
+}
+
+function stopQrScanner() {
+    if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().catch(e=>console.warn);
+    }
+}
+
+function handleQrResult(data) {
+    // expect format: Name|Dosage|Time   or   Name,Dosage,Time   (supports '|' or ',')
+    let parts = [];
+    if (data.includes('|')) parts = data.split('|');
+    else if (data.includes(',')) parts = data.split(',');
+    else parts = [data.trim(), "", ""];
+    
+    let name = parts[0] ? parts[0].trim() : "";
+    let dosage = parts[1] ? parts[1].trim() : "";
+    let time = parts[2] ? parts[2].trim() : "";
+    
+    if (!name) {
+        toast("❌ QR-код не содержит названия лекарства");
+        return;
+    }
+    if (!dosage) dosage = "1 доза";
+    if (!time) time = "—";
+    
+    // auto-add medicine
+    const newMed = {
+        id: Date.now(),
+        name: name,
+        dosage: dosage,
+        time: time
+    };
+    appData.medicines.push(newMed);
+    saveToLocal();
     updateAll();
+    toast(`💊 Добавлено через QR: ${name} (${dosage})`);
+    // clear input fields optionally
+    document.getElementById('med-name').value = '';
+    document.getElementById('med-dosage').value = '';
+    document.getElementById('med-time').value = '';
 }
 
-function toast(msg) {
-    var t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(function() { t.classList.remove('show'); }, 2500);
+// QR CODE GENERATION for each medicine (display small qr image)
+function generateMedQrCode(med) {
+    // format: name|dosage|time
+    const qrData = `${med.name}|${med.dosage}|${med.time}`;
+    // Using Google Charts API for simplicity (works without extra lib)
+    const qrUrl = `https://chart.googleapis.com/chart?chs=120x120&cht=qr&chl=${encodeURIComponent(qrData)}&choe=UTF-8`;
+    return `<img src="${qrUrl}" alt="QR" style="width:44px; height:44px; border-radius:12px; background:white; padding:4px;" title="Отсканируйте чтобы добавить это лекарство">`;
 }
 
-function getDate() { return new Date().toLocaleDateString('ru-RU'); }
+function takeMedicine(medId) {
+    const med = appData.medicines.find(m => m.id == medId);
+    if (!med) { toast("Лекарство не найдено"); return; }
+    const today = getTodayStr();
+    const newIntake = {
+        id: Date.now() + Math.random(),
+        medicineId: med.id,
+        dateStr: today,
+        timestamp: new Date().toISOString(),
+        takenAt: getCurrentTimeStr(),
+        medicineName: med.name
+    };
+    appData.medicineIntakes.unshift(newIntake);
+    saveToLocal();
+    updateAll();
+    toast(`✅ Приём: ${med.name} (${med.dosage}) зафиксирован`);
+}
 
+function deleteMedicine(medId) {
+    if (confirm("Удалить лекарство из списка?")) {
+        appData.medicines = appData.medicines.filter(m => m.id != medId);
+        saveToLocal();
+        updateAll();
+        toast("Лекарство удалено");
+    }
+}
+
+function editMedicine(medId) {
+    const med = appData.medicines.find(m => m.id == medId);
+    if (!med) return;
+    const newName = prompt("Название лекарства:", med.name);
+    if (newName === null) return;
+    const newDosage = prompt("Дозировка (например, 500мг):", med.dosage);
+    if (newDosage === null) return;
+    const newTime = prompt("Время приёма (например, 08:00):", med.time);
+    if (newTime === null) return;
+    med.name = newName.trim() || med.name;
+    med.dosage = newDosage.trim() || med.dosage;
+    med.time = newTime.trim() || med.time;
+    saveToLocal();
+    updateAll();
+    toast("Лекарство обновлено");
+}
+
+function addNewMedicine() {
+    let name = document.getElementById('med-name').value.trim();
+    let dosage = document.getElementById('med-dosage').value.trim();
+    let time = document.getElementById('med-time').value;
+    if (!name) { toast("Введите название лекарства"); return; }
+    if (!dosage) dosage = "1 доза";
+    if (!time) time = "—";
+    const newMed = { id: Date.now(), name: name, dosage: dosage, time: time };
+    appData.medicines.push(newMed);
+    document.getElementById('med-name').value = '';
+    document.getElementById('med-dosage').value = '';
+    document.getElementById('med-time').value = '';
+    saveToLocal();
+    updateAll();
+    toast(`💊 ${name} добавлено`);
+}
+
+function getTodayIntakesForMed(medId) {
+    const today = getTodayStr();
+    return appData.medicineIntakes.filter(int => int.medicineId == medId && int.dateStr === today).length;
+}
+
+function renderMedicineSection() {
+    const container = document.getElementById('medicine-list-container');
+    if (!container) return;
+    if (!appData.medicines.length) {
+        container.innerHTML = '<div class="history-item" style="border-radius:28px;">💊 Нет добавленных лекарств. Добавьте вручную или через QR.</div>';
+        return;
+    }
+    let html = '';
+    appData.medicines.forEach(med => {
+        const todayCount = getTodayIntakesForMed(med.id);
+        const takenStatus = todayCount > 0 ? `✅ Принято (${todayCount} раз сегодня)` : `⚠️ Не принято сегодня`;
+        const statusClass = todayCount > 0 ? 'status-taken' : 'status-missed';
+        const qrImage = generateMedQrCode(med);
+        html += `
+            <div class="med-grid-item">
+                <div class="med-header">
+                    <span class="med-name">💊 ${escapeHtml(med.name)}</span>
+                    <span class="med-badge">${escapeHtml(med.time)}</span>
+                </div>
+                <div class="med-details">💊 ${escapeHtml(med.dosage)}</div>
+                <div class="today-status ${statusClass}">📅 ${takenStatus}</div>
+                <div class="med-actions">
+                    <button class="btn btn-small btn-outline" onclick="takeMedicine(${med.id})">💊 Принять сейчас</button>
+                    <button class="btn btn-small btn-outline" onclick="editMedicine(${med.id})">✏️ Ред.</button>
+                    <button class="btn btn-small" style="background:#fee2e2; color:#b91c1c;" onclick="deleteMedicine(${med.id})">🗑️ Удалить</button>
+                    <div style="margin-left: auto;" title="QR код лекарства (для быстрого добавления на другой телефон)">${qrImage}</div>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function renderIntakeHistory() {
+    const historyDiv = document.getElementById('intake-history-list');
+    if (!historyDiv) return;
+    if (appData.medicineIntakes.length === 0) {
+        historyDiv.innerHTML = '<div class="history-item">📭 Нет записей о приёмах</div>';
+        return;
+    }
+    const list = appData.medicineIntakes.slice(0, 30);
+    let items = '';
+    list.forEach(intake => {
+        const med = appData.medicines.find(m => m.id == intake.medicineId);
+        const medName = med ? med.name : intake.medicineName || "Препарат";
+        items += `<div class="history-item"><span>📅 ${intake.dateStr} ${intake.takenAt || ""}</span><span>💊 ${escapeHtml(medName)}</span></div>`;
+    });
+    historyDiv.innerHTML = items;
+}
+
+// Basic trackers
 function addSleep() {
-    var val = parseInt(document.getElementById('sleep-input').value);
-    if (val && val > 0) {
-        data.sleep = val;
-        data.sleepHistory.unshift({ date: getDate(), hours: val });
+    let val = parseFloat(document.getElementById('sleep-input').value);
+    if (!isNaN(val) && val > 0) {
+        appData.sleep = val;
+        appData.sleepHistory.unshift({ date: getTodayStr(), hours: val });
         document.getElementById('sleep-input').value = '';
-        save(); toast('✅ Сон сохранен: ' + val + ' ч');
+        saveToLocal(); updateAll(); toast(`😴 Сон: ${val} ч`);
+    } else toast("Введите корректные часы");
+}
+function addWater(amount) { appData.water += amount; appData.waterHistory.unshift({ date: getTodayStr(), amount: amount }); saveToLocal(); updateAll(); toast(`💧 +${amount} мл`); }
+function addWaterManual() { let val = parseInt(document.getElementById('water-input').value); if (val && val>0) { addWater(val); document.getElementById('water-input').value=''; } }
+function addSteps() { let val = parseInt(document.getElementById('steps-input').value); if (val && val>0) { appData.steps = val; appData.stepsHistory.unshift({ date: getTodayStr(), steps: val }); document.getElementById('steps-input').value = ''; saveToLocal(); updateAll(); toast(`👟 ${val} шагов`); } else toast("Введите число"); }
+
+function clearAllData() {
+    if (confirm("Удалить ВСЕ данные? Восстановить будет нельзя.")) {
+        resetDefaultData();
+        saveToLocal();
+        updateAll();
+        toast("🗑️ Все данные сброшены");
     }
-}
-
-function addWater(amount) {
-    data.water += amount;
-    data.waterHistory.unshift({ date: getDate(), amount: amount });
-    save(); toast('✅ +' + amount + ' мл воды');
-}
-
-function addWaterManual() {
-    var val = parseInt(document.getElementById('water-input').value);
-    if (val && val > 0) { addWater(val); document.getElementById('water-input').value = ''; }
-}
-
-function addSteps() {
-    var val = parseInt(document.getElementById('steps-input').value);
-    if (val && val > 0) {
-        data.steps = val;
-        data.stepsHistory.unshift({ date: getDate(), steps: val });
-        document.getElementById('steps-input').value = '';
-        save(); toast('✅ Шаги сохранены: ' + val);
-    }
-}
-
-function setMood(emoji, name) {
-    data.mood = emoji; data.moodName = name;
-    data.moodHistory.unshift({ date: getDate(), mood: emoji, name: name });
-    save(); toast('✅ Настроение: ' + emoji + ' ' + name);
-}
-
-function addMedicine() {
-    var name = document.getElementById('med-name').value.trim();
-    var time = document.getElementById('med-time').value;
-    if (name && time) {
-        data.medicines.push({ name: name, time: time });
-        document.getElementById('med-name').value = '';
-        document.getElementById('med-time').value = '';
-        save(); toast('✅ Лекарство добавлено: ' + name);
-    }
-}
-
-function deleteMedicine(index) {
-    var name = data.medicines[index].name;
-    data.medicines.splice(index, 1);
-    save(); toast('🗑️ Удалено: ' + name);
 }
 
 function updateAll() {
-    var now = new Date();
-    var opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    var de = document.getElementById('currentDate');
-    if (de) de.textContent = now.toLocaleDateString('ru-RU', opts);
-
-    var sd = document.getElementById('sleep-display'); if (sd) sd.textContent = data.sleep + ' часов';
-    var wd = document.getElementById('water-display'); if (wd) wd.textContent = data.water + ' мл';
-    var std = document.getElementById('steps-display'); if (std) std.textContent = data.steps + ' шагов';
-    var md = document.getElementById('mood-display'); if (md) md.textContent = data.mood + ' ' + data.moodName;
-    var medd = document.getElementById('medicine-display'); if (medd) medd.textContent = data.medicines.length + ' активных';
-
-    var st = document.getElementById('sleep-total'); if (st) st.textContent = data.sleep;
-    var sh = document.getElementById('sleep-history');
-    if (sh) sh.innerHTML = data.sleepHistory.length === 0
-        ? '<div class="history-item">Нет данных</div>'
-        : data.sleepHistory.map(function(i) {
-            return '<div class="history-item"><span>' + i.date + '</span><span>' + i.hours + ' ч</span></div>';
-        }).join('');
-
-    var wt = document.getElementById('water-total'); if (wt) wt.textContent = data.water;
-    var wh = document.getElementById('water-history');
-    if (wh) wh.innerHTML = data.waterHistory.length === 0
-        ? '<div class="history-item">Нет данных</div>'
-        : data.waterHistory.map(function(i) {
-            return '<div class="history-item"><span>' + i.date + '</span><span>' + i.amount + ' мл</span></div>';
-        }).join('');
-
-    var stt = document.getElementById('steps-total'); if (stt) stt.textContent = data.steps;
-    var sth = document.getElementById('steps-history');
-    if (sth) sth.innerHTML = data.stepsHistory.length === 0
-        ? '<div class="history-item">Нет данных</div>'
-        : data.stepsHistory.map(function(i) {
-            return '<div class="history-item"><span>' + i.date + '</span><span>' + i.steps + ' шагов</span></div>';
-        }).join('');
-
-    var mc = document.getElementById('mood-current'); if (mc) mc.textContent = data.mood;
-    var mh = document.getElementById('mood-history');
-    if (mh) mh.innerHTML = data.moodHistory.length === 0
-        ? '<div class="history-item">Нет данных</div>'
-        : data.moodHistory.map(function(i) {
-            return '<div class="history-item"><span>' + i.date + '</span><span>' + i.mood + ' ' + i.name + '</span></div>';
-        }).join('');
-
-    var ml = document.getElementById('medicine-list');
-    if (ml) ml.innerHTML = data.medicines.length === 0
-        ? '<div class="history-item">Нет лекарств</div>'
-        : data.medicines.map(function(med, i) {
-            return '<div class="history-item"><span><strong>' + med.name + '</strong><br><small>' + med.time + '</small></span><button class="btn btn-small" onclick="deleteMedicine(' + i + ')" style="background:red;">🗑️</button></div>';
-        }).join('');
-
-    var ss = document.getElementById('stats-sleep'); if (ss) ss.textContent = data.sleep;
-    var sw = document.getElementById('stats-water'); if (sw) sw.textContent = data.water;
-    var sst = document.getElementById('stats-steps'); if (sst) sst.textContent = data.steps;
-    var sm = document.getElementById('stats-mood'); if (sm) sm.textContent = data.mood;
-    var sme = document.getElementById('stats-medicine'); if (sme) sme.textContent = data.medicines.length;
+    document.getElementById('sleep-display').innerText = appData.sleep + ' часов';
+    document.getElementById('water-display').innerText = appData.water + ' мл';
+    document.getElementById('steps-display').innerText = appData.steps + ' шагов';
+    const medTotal = appData.medicines.length;
+    const todayTotalIntakes = appData.medicineIntakes.filter(i => i.dateStr === getTodayStr()).length;
+    document.getElementById('medicine-display').innerHTML = `${medTotal} препаратов, ${todayTotalIntakes} приёмов`;
+    if(document.getElementById('sleep-total')) document.getElementById('sleep-total').innerText = appData.sleep;
+    if(document.getElementById('water-total')) document.getElementById('water-total').innerText = appData.water;
+    if(document.getElementById('steps-total')) document.getElementById('steps-total').innerText = appData.steps;
+    renderHistory('sleep-history', appData.sleepHistory, 'hours', 'ч');
+    renderHistory('water-history', appData.waterHistory, 'amount', 'мл');
+    renderHistory('steps-history', appData.stepsHistory, 'steps', 'шагов');
+    renderMedicineSection();
+    renderIntakeHistory();
+    if(document.getElementById('med-today-count')) document.getElementById('med-today-count').innerText = todayTotalIntakes;
+    if(document.getElementById('stats-sleep')) document.getElementById('stats-sleep').innerText = appData.sleep;
+    if(document.getElementById('stats-water')) document.getElementById('stats-water').innerText = appData.water;
+    if(document.getElementById('stats-steps')) document.getElementById('stats-steps').innerText = appData.steps;
+    if(document.getElementById('stats-medicine-count')) document.getElementById('stats-medicine-count').innerText = appData.medicines.length;
+    if(document.getElementById('stats-today-intakes')) document.getElementById('stats-today-intakes').innerText = todayTotalIntakes;
+    const now = new Date();
+    const dateOpt = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateHeader = document.getElementById('currentDate');
+    if (dateHeader) dateHeader.innerText = now.toLocaleDateString('ru-RU', dateOpt);
 }
 
-function clearAllData() {
-    if (confirm('Удалить все данные?')) {
-        data = {
-            sleep: 0, sleepHistory: [],
-            water: 0, waterHistory: [],
-            steps: 0, stepsHistory: [],
-            mood: '😊', moodName: 'Отличное', moodHistory: [],
-            medicines: []
-        };
-        save(); toast('🗑️ Все данные удалены');
-    }
+function renderHistory(elementId, historyArr, valueKey, unitLabel) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    if (!historyArr.length) { el.innerHTML = '<div class="history-item">Нет данных</div>'; return; }
+    el.innerHTML = historyArr.map(entry => `<div class="history-item"><span>${entry.date}</span><span>${entry[valueKey]} ${unitLabel}</span></div>`).join('');
 }
 
+function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2300); }
+function openScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(`${screenId}-screen`);
+    if (target) target.classList.add('active');
+    updateAll();
+}
+
+// QR Modal events
+document.getElementById('qrScanBtn')?.addEventListener('click', () => startQrScanner());
+document.getElementById('closeQrModalBtn')?.addEventListener('click', () => {
+    document.getElementById('qrModal').classList.remove('active');
+    stopQrScanner();
+});
+
+loadData();
+if (localStorage.getItem('myday')) localStorage.removeItem('myday');
+saveToLocal();
 updateAll();
+
+// Globals for onclick
+window.addSleep = addSleep; window.addWater = addWater; window.addWaterManual = addWaterManual;
+window.addSteps = addSteps; window.addNewMedicine = addNewMedicine; window.takeMedicine = takeMedicine;
+window.deleteMedicine = deleteMedicine; window.editMedicine = editMedicine; window.clearAllData = clearAllData;
+window.openScreen = openScreen;
 </script>
 </body>
 </html>
