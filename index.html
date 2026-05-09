@@ -1,20 +1,15 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Здоровье+ | QR Медицина</title>
-
-<!-- Libs -->
+<title>Sağlık+ | QR İlaç Takibi</title>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
-<!-- App modules -->
 <script src="languages.js"></script>
 <script src="medicines.js"></script>
 <script src="schedule.js"></script>
 <script src="ai-assistant.js"></script>
-
 <style>
 :root {
   --bg: #f8fafc;
@@ -264,11 +259,10 @@ canvas { max-width: 100%; margin: 10px 0; }
 <body>
 <div class="app-container">
 
-<!-- DASHBOARD -->
 <div id="dashboard-screen" class="screen active">
   <div class="header">
     <button class="lang-btn" onclick="toggleLangDropdown()">🌐</button>
-    <h1 id="header-title" data-i18n="header_title"></h1>
+    <h1 id="header-title">💙 Günüm</h1>
     <div class="date" id="currentDate"></div>
     <div class="lang-dropdown" id="langDropdown">
       <button onclick="setLanguage('tr')">🇹🇷 Türkçe</button>
@@ -281,306 +275,296 @@ canvas { max-width: 100%; margin: 10px 0; }
     <button class="card" onclick="openScreen('sleep')">
       <div class="card-icon">😴</div>
       <div class="card-content">
-        <h3 id="card-sleep" data-i18n="card_sleep"></h3>
-        <p id="sleep-display">0</p>
+        <h3 id="card-sleep">Uyku</h3>
+        <p id="sleep-display">0 saat</p>
       </div>
     </button>
     <button class="card" onclick="openScreen('water')">
       <div class="card-icon">💧</div>
       <div class="card-content">
-        <h3 id="card-water" data-i18n="card_water"></h3>
-        <p id="water-display">0</p>
+        <h3 id="card-water">Su</h3>
+        <p id="water-display">0 ml</p>
       </div>
     </button>
     <button class="card" onclick="openScreen('steps')">
       <div class="card-icon">👟</div>
       <div class="card-content">
-        <h3 id="card-steps" data-i18n="card_steps"></h3>
-        <p id="steps-display">0</p>
+        <h3 id="card-steps">Adımlar</h3>
+        <p id="steps-display">0 adım</p>
       </div>
     </button>
     <button class="card" onclick="openScreen('medicine')">
       <div class="card-icon">💊</div>
       <div class="card-content">
-        <h3 id="card-medicine" data-i18n="card_medicine"></h3>
-        <p id="medicine-display">0</p>
+        <h3 id="card-medicine">İlaçlar</h3>
+        <p id="medicine-display">0 ilaç</p>
       </div>
     </button>
     <button class="card" onclick="openScreen('schedule')">
       <div class="card-icon">📅</div>
       <div class="card-content">
-        <h3 id="card-schedule" data-i18n="card_schedule"></h3>
-        <p id="schedule-display" data-i18n="schedule_view"></p>
+        <h3 id="card-schedule">Takvim</h3>
+        <p id="schedule-display">Görüntüle</p>
       </div>
     </button>
     <button class="card" onclick="openScreen('ai')">
       <div class="card-icon">🤖</div>
       <div class="card-content">
-        <h3 id="card-ai" data-i18n="card_ai"></h3>
-        <p id="ai-display" data-i18n="ai_questions"></p>
+        <h3 id="card-ai">AI Asistan</h3>
+        <p id="ai-display">Sorular</p>
       </div>
     </button>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn active" onclick="openScreen('dashboard')">
-      <span class="icon">🏠</span><span id="nav-home" data-i18n="nav_home"></span>
+      <span class="icon">🏠</span><span id="nav-home">Ana Sayfa</span>
     </button>
     <button class="nav-btn" onclick="openScreen('stats')">
-      <span class="icon">📊</span><span id="nav-stats" data-i18n="nav_stats"></span>
+      <span class="icon">📊</span><span id="nav-stats">İstatistikler</span>
     </button>
     <button class="nav-btn" onclick="openScreen('profile')">
-      <span class="icon">👤</span><span id="nav-profile" data-i18n="nav_profile"></span>
+      <span class="icon">👤</span><span id="nav-profile">Profil</span>
     </button>
   </div>
 </div>
 
-<!-- SLEEP -->
 <div id="sleep-screen" class="screen">
   <div class="header">
     <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-    <h1 id="header-sleep" data-i18n="header_sleep"></h1>
+    <h1 id="header-sleep">😴 Uyku</h1>
   </div>
   <div class="screen-content">
     <div class="stat-card">
       <div class="big-number" id="sleep-total">0</div>
-      <div class="unit" id="unit-sleep-hours" data-i18n="unit_sleep_today"></div>
+      <div class="unit" id="unit-sleep-hours">bugün saat</div>
     </div>
-    <h2 id="sleep-add-title" data-i18n="sleep_add"></h2>
-    <input type="number" id="sleep-input" placeholder="Часы сна" min="0" max="24" step="0.5">
-    <button class="btn" onclick="addSleep()" id="sleep-save-btn" data-i18n="btn_save_sleep"></button>
-    <h2 id="sleep-history-title" data-i18n="sleep_history"></h2>
+    <h2 id="sleep-add-title">Uyku ekle</h2>
+    <input type="number" id="sleep-input" placeholder="Uyku süresi (saat)" min="0" max="24" step="0.5">
+    <button class="btn" onclick="addSleep()" id="sleep-save-btn">💾 Kaydet</button>
+    <h2 id="sleep-history-title">Uyku geçmişi</h2>
     <div id="sleep-history" class="history-list"></div>
   </div>
 </div>
 
-<!-- WATER -->
 <div id="water-screen" class="screen">
   <div class="header">
     <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-    <h1 id="header-water" data-i18n="header_water"></h1>
+    <h1 id="header-water">💧 Su</h1>
   </div>
   <div class="screen-content">
     <div class="stat-card">
       <div class="big-number" id="water-total">0</div>
-      <div class="unit" id="unit-water" data-i18n="unit_water_today"></div>
+      <div class="unit" id="unit-water">bugün (hedef: 2000 ml)</div>
     </div>
-    <h2 id="water-quick-title" data-i18n="water_quick_add"></h2>
-    <button class="btn btn-small" onclick="addWater(100)" data-i18n="water_100"></button>
-    <button class="btn btn-small" onclick="addWater(250)" data-i18n="water_250"></button>
-    <button class="btn btn-small" onclick="addWater(500)" data-i18n="water_500"></button>
+    <h2 id="water-quick-title">Hızlı ekleme</h2>
+    <button class="btn btn-small" onclick="addWater(100)">+100 ml</button>
+    <button class="btn btn-small" onclick="addWater(250)">+250 ml</button>
+    <button class="btn btn-small" onclick="addWater(500)">+500 ml</button>
     <br><br>
-    <input type="number" id="water-input" placeholder="Другой объем (мл)">
-    <button class="btn" onclick="addWaterManual()" id="water-add-btn" data-i18n="water_add_btn"></button>
-    <h2 id="water-history-title" data-i18n="water_history"></h2>
+    <input type="number" id="water-input" placeholder="Diğer miktar (ml)">
+    <button class="btn" onclick="addWaterManual()" id="water-add-btn">💾 Ekle</button>
+    <h2 id="water-history-title">Su geçmişi</h2>
     <div id="water-history" class="history-list"></div>
   </div>
 </div>
 
-<!-- STEPS -->
 <div id="steps-screen" class="screen">
   <div class="header">
     <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-    <h1 id="header-steps" data-i18n="header_steps"></h1>
+    <h1 id="header-steps">👟 Adımlar</h1>
   </div>
   <div class="screen-content">
     <div class="stat-card">
       <div class="big-number" id="steps-total">0</div>
-      <div class="unit" id="unit-steps" data-i18n="unit_steps_today"></div>
+      <div class="unit" id="unit-steps">bugün adım</div>
     </div>
-    <h2 id="steps-add-title" data-i18n="steps_add"></h2>
-    <input type="number" id="steps-input" placeholder="Количество шагов">
-    <button class="btn" onclick="addSteps()" id="steps-save-btn" data-i18n="btn_save_steps"></button>
-    <h2 id="steps-history-title" data-i18n="steps_history"></h2>
+    <h2 id="steps-add-title">Adım ekle</h2>
+    <input type="number" id="steps-input" placeholder="Adım sayısı">
+    <button class="btn" onclick="addSteps()" id="steps-save-btn">💾 Kaydet</button>
+    <h2 id="steps-history-title">Adım geçmişi</h2>
     <div id="steps-history" class="history-list"></div>
   </div>
 </div>
 
-<!-- MEDICINE -->
 <div id="medicine-screen" class="screen">
   <div class="header">
     <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-    <h1 id="header-medicine" data-i18n="header_medicine"></h1>
+    <h1 id="header-medicine">💊 İlaçlar + QR</h1>
   </div>
   <div class="screen-content">
     <div class="stat-card">
       <div class="big-number" id="med-today-count">0</div>
-      <div class="unit" id="unit-med-intakes" data-i18n="unit_med_intakes"></div>
+      <div class="unit" id="unit-med-intakes">bugünkü dozlar</div>
     </div>
-    <h2 id="med-add-title" data-i18n="med_add_title"></h2>
-    <input type="text" id="med-name" placeholder="Название (например, Парацетамол)" autocomplete="off">
-    <input type="text" id="med-dosage" placeholder="Дозировка (например, 500мг / 1 таб.)" autocomplete="off">
-    <input type="time" id="med-time" placeholder="Время приёма (необязательно)">
+    <h2 id="med-add-title">➕ İlaç ekle</h2>
+    <input type="text" id="med-name" placeholder="Ad (ör. Parasetamol)" autocomplete="off">
+    <input type="text" id="med-dosage" placeholder="Doz (ör. 500mg / 1 tb.)" autocomplete="off">
+    <input type="time" id="med-time" placeholder="Saat (opsiyonel)">
     <select id="med-instruction" style="margin-bottom: 12px;">
-      <option value="" data-i18n="med_instr_placeholder"></option>
-      <option value="before-meal" data-i18n="med_instr_before_meal"></option>
-      <option value="with-meal" data-i18n="med_instr_with_meal"></option>
-      <option value="after-meal" data-i18n="med_instr_after_meal"></option>
-      <option value="with-water" data-i18n="med_instr_with_water"></option>
-      <option value="with-milk" data-i18n="med_instr_with_milk"></option>
-      <option value="no-chew" data-i18n="med_instr_no_chew"></option>
-      <option value="dissolve" data-i18n="med_instr_dissolve"></option>
-      <option value="other" data-i18n="med_instr_other"></option>
+      <option value="">Talimat seç...</option>
+      <option value="before-meal">Yemekten önce</option>
+      <option value="with-meal">Yemekle birlikte</option>
+      <option value="after-meal">Yemekten sonra</option>
+      <option value="with-water">Su ile</option>
+      <option value="with-milk">Süt ile</option>
+      <option value="no-chew">Çiğneme</option>
+      <option value="dissolve">Suda çöz</option>
+      <option value="other">Diğer</option>
     </select>
-    <input type="number" id="med-days" placeholder="Количество дней (0 = бесконечно)" min="0" value="0">
-    <button class="btn" onclick="addNewMedicine()" id="med-save-btn" data-i18n="med_save_manual"></button>
-    <button class="btn btn-outline" id="qrScanBtn" onclick="startQrScanner()" data-i18n="med_scan_qr"></button>
-    <h2 id="med-list-title" data-i18n="med_list_title"></h2>
-    <div id="medicine-list-container" class="medicine-list-area">--</div>
-    <h2 id="med-intake-history-title" data-i18n="med_intake_history_title"></h2>
+    <input type="number" id="med-days" placeholder="Gün sayısı (0 = sınırsız)" min="0" value="0">
+    <button class="btn" onclick="addNewMedicine()" id="med-save-btn">💾 Elle kaydet</button>
+    <button class="btn btn-outline" id="qrScanBtn" onclick="startQrScanner()">📷 QR Tara</button>
+    <h2 id="med-list-title">📋 İlaç listem</h2>
+    <div id="medicine-list-container" class="medicine-list-area">-- yükleniyor --</div>
+    <h2 id="med-intake-history-title">📜 Doz geçmişi</h2>
     <div id="intake-history-list" class="history-list"></div>
   </div>
 </div>
 
-<!-- SCHEDULE -->
 <div id="schedule-screen" class="screen">
   <div class="header">
     <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-    <h1 id="header-schedule" data-i18n="header_schedule"></h1>
+    <h1 id="header-schedule">📅 Günlük takvim</h1>
   </div>
   <div class="screen-content">
-    <p id="schedule-desc" style="color: var(--text-secondary); margin-bottom: 16px;" data-i18n="schedule_desc"></p>
+    <p id="schedule-desc" style="color: var(--text-secondary); margin-bottom: 16px;">
+      Bugünkü ilaç takvimi ve öneriler
+    </p>
     <div id="schedule-table-container"></div>
   </div>
 </div>
 
-<!-- AI -->
 <div id="ai-screen" class="screen">
   <div class="header">
     <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-    <h1 id="header-ai" data-i18n="header_ai"></h1>
+    <h1 id="header-ai">🤖 AI Asistan</h1>
   </div>
   <div class="screen-content">
     <div class="ai-chat" id="aiChatContainer">
-      <div class="ai-chat-header">
-        💬 <span id="ai-title" data-i18n="ai_title"></span>
-      </div>
+      <div class="ai-chat-header">💬 <span id="ai-title">Sağlık Asistanı</span></div>
       <div id="aiMessages"></div>
       <div class="ai-chat-input-group">
-        <textarea id="aiQuestion" placeholder="Задайте вопрос о здоровье..." style="margin-bottom: 0;"></textarea>
-        <button class="btn" onclick="sendAiQuestion()" style="width: 100%; margin: 0; padding: 10px 16px;" id="ai-send-btn" data-i18n="ai_send_btn"></button>
+        <textarea id="aiQuestion" placeholder="Sağlıkla ilgili bir soru sor..." style="margin-bottom: 0;"></textarea>
+        <button class="btn" onclick="sendAiQuestion()" style="width: 100%; margin: 0; padding: 10px 16px;" id="ai-send-btn">Gönder</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- STATS -->
 <div id="stats-screen" class="screen">
   <div class="header">
-    <h1 id="header-stats" data-i18n="header_stats"></h1>
+    <h1 id="header-stats">📊 İstatistikler</h1>
   </div>
   <div class="screen-content">
     <div class="stat-card">
-      <h3 id="stat-sleep-title" data-i18n="stat_sleep_title"></h3>
+      <h3 id="stat-sleep-title">😴 Uyku (bugün)</h3>
       <div class="big-number" id="stats-sleep">0</div>
-      <div class="unit" data-i18n="unit_hours"></div>
+      <div class="unit">saat</div>
     </div>
     <div class="stat-card">
-      <h3 id="stat-water-title" data-i18n="stat_water_title"></h3>
+      <h3 id="stat-water-title">💧 Su</h3>
       <div class="big-number" id="stats-water">0</div>
-      <div class="unit" data-i18n="unit_ml"></div>
+      <div class="unit">ml</div>
     </div>
     <div class="stat-card">
-      <h3 id="stat-steps-title" data-i18n="stat_steps_title"></h3>
+      <h3 id="stat-steps-title">👟 Adımlar</h3>
       <div class="big-number" id="stats-steps">0</div>
-      <div class="unit" data-i18n="unit_steps"></div>
+      <div class="unit">adım</div>
     </div>
     <div class="stat-card">
-      <h3 id="stat-med-title" data-i18n="stat_med_title"></h3>
+      <h3 id="stat-med-title">💊 İlaçlar</h3>
       <div class="big-number" id="stats-medicine-count">0</div>
-      <div class="unit" id="unit-stat-med" data-i18n="unit_stat_med"></div>
+      <div class="unit" id="unit-stat-med">aktif ilaç</div>
     </div>
     <div class="stat-card">
-      <h3 id="stat-intakes-title" data-i18n="stat_intakes_title"></h3>
+      <h3 id="stat-intakes-title">✅ Bugünkü dozlar</h3>
       <div class="big-number" id="stats-today-intakes">0</div>
-      <div class="unit" id="unit-stat-intakes" data-i18n="unit_stat_intakes"></div>
+      <div class="unit" id="unit-stat-intakes">kayıtlı doz</div>
     </div>
-    <button class="btn" onclick="openScreen('charts')" id="charts-btn" data-i18n="charts_btn"></button>
+    <button class="btn" onclick="openScreen('charts')" id="charts-btn">📈 Haftalık grafikler</button>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn" onclick="openScreen('dashboard')">
-      <span class="icon">🏠</span><span id="nav-stats-home" data-i18n="nav_home"></span>
+      <span class="icon">🏠</span><span id="nav-stats-home">Ana Sayfa</span>
     </button>
     <button class="nav-btn active">
-      <span class="icon">📊</span><span id="nav-stats-active" data-i18n="nav_stats"></span>
+      <span class="icon">📊</span><span id="nav-stats-active">İstatistikler</span>
     </button>
     <button class="nav-btn" onclick="openScreen('profile')">
-      <span class="icon">👤</span><span id="nav-stats-profile" data-i18n="nav_profile"></span>
+      <span class="icon">👤</span><span id="nav-stats-profile">Profil</span>
     </button>
   </div>
 </div>
 
-<!-- CHARTS -->
 <div id="charts-screen" class="screen">
   <div class="header">
     <button class="back-btn" onclick="openScreen('stats')">←</button>
-    <h1 id="header-charts" data-i18n="header_charts"></h1>
+    <h1 id="header-charts">📈 Haftalık grafikler</h1>
   </div>
   <div class="screen-content">
     <div class="stat-card">
-      <h3 id="chart-sleep-title" data-i18n="chart_sleep_title"></h3>
+      <h3 id="chart-sleep-title">😴 Son 7 gün uyku</h3>
       <canvas id="sleepChart" width="300" height="150"></canvas>
     </div>
     <div class="stat-card">
-      <h3 id="chart-water-title" data-i18n="chart_water_title"></h3>
+      <h3 id="chart-water-title">💧 Son 7 gün su</h3>
       <canvas id="waterChart" width="300" height="150"></canvas>
     </div>
     <div class="stat-card">
-      <h3 id="chart-steps-title" data-i18n="chart_steps_title"></h3>
+      <h3 id="chart-steps-title">👟 Son 7 gün adım</h3>
       <canvas id="stepsChart" width="300" height="150"></canvas>
     </div>
   </div>
 </div>
 
-<!-- PROFILE -->
 <div id="profile-screen" class="screen">
   <div class="header">
-    <h1 id="header-profile" data-i18n="header_profile"></h1>
+    <h1 id="header-profile">👤 Profil</h1>
   </div>
   <div class="screen-content">
     <div class="profile-avatar">💊❤️</div>
     <div class="stat-card">
-      <h3 id="profile-title" data-i18n="profile_title"></h3>
-      <p id="profile-desc" data-i18n="profile_desc"></p>
+      <h3 id="profile-title">Günüm — Pro + QR + AI</h3>
+      <p id="profile-desc">Sağlık takibi + QR kod + AI asistan</p>
       <p>ННГУ им. Лобачевского</p>
       <p>Группа 3825Б1ПР3</p>
     </div>
-    <label id="theme-label" data-i18n="theme_label"></label>
+    <label id="theme-label">Tema:</label>
     <select id="themeSelector" onchange="changeTheme(this.value)" style="margin-bottom: 12px;">
-      <option value="light" data-i18n="theme_light"></option>
-      <option value="dark" data-i18n="theme_dark"></option>
-      <option value="ocean" data-i18n="theme_ocean"></option>
-      <option value="forest" data-i18n="theme_forest"></option>
+      <option value="light">🌞 Açık tema</option>
+      <option value="dark">🌙 Koyu tema</option>
+      <option value="ocean">🌊 Okyanus</option>
+      <option value="forest">🌲 Orman</option>
     </select>
-    <label id="api-key-label" data-i18n="api_key_label"></label>
+    <label id="api-key-label">DeepSeek API Key (AI asistan için):</label>
     <input type="password" id="apiKeyInput" placeholder="sk-..." style="margin-bottom: 12px;">
-    <button class="btn" onclick="saveApiKey()" id="save-api-btn" data-i18n="save_api_btn"></button>
-    <button class="btn" onclick="exportData()" id="export-btn" data-i18n="export_btn"></button>
-    <button class="btn btn-outline" onclick="document.getElementById('importFile').click()" id="import-btn" data-i18n="import_btn"></button>
+    <button class="btn" onclick="saveApiKey()" id="save-api-btn">💾 API Key kaydet</button>
+    <button class="btn" onclick="exportData()" id="export-btn">📁 Verileri dışa aktar (JSON)</button>
+    <button class="btn btn-outline" onclick="document.getElementById('importFile').click()" id="import-btn">📂 Dosyadan içe aktar</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-    <button class="btn" style="background:#b91c1c; margin-top:20px;" onclick="clearAllData()" id="clear-btn" data-i18n="clear_btn"></button>
+    <button class="btn" style="background:#b91c1c; margin-top:20px;" onclick="clearAllData()" id="clear-btn">🗑️ Tüm verileri sil</button>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn" onclick="openScreen('dashboard')">
-      <span class="icon">🏠</span><span id="nav-profile-home" data-i18n="nav_home"></span>
+      <span class="icon">🏠</span><span id="nav-profile-home">Ana Sayfa</span>
     </button>
     <button class="nav-btn" onclick="openScreen('stats')">
-      <span class="icon">📊</span><span id="nav-profile-stats" data-i18n="nav_stats"></span>
+      <span class="icon">📊</span><span id="nav-profile-stats">İstatistikler</span>
     </button>
     <button class="nav-btn active">
-      <span class="icon">👤</span><span id="nav-profile-active" data-i18n="nav_profile"></span>
+      <span class="icon">👤</span><span id="nav-profile-active">Profil</span>
     </button>
   </div>
 </div>
 
-<!-- QR MODAL -->
 <div id="qrModal" class="qr-modal">
   <div class="qr-container">
     <div class="qr-header">
-      <span id="qr-header-text" data-i18n="qr_header_text"></span>
+      <span id="qr-header-text">📷 QR koda kamerayı tut</span>
       <button id="closeQrModalBtn" onclick="stopQrScanner(); document.getElementById('qrModal').classList.remove('active');">&times;</button>
     </div>
     <div id="qr-reader"></div>
-    <div class="qr-info" id="qr-info" data-i18n="qr_info_wait"></div>
+    <div class="qr-info" id="qr-info">🔍 Tarama bekleniyor...</div>
   </div>
 </div>
 
@@ -594,13 +578,13 @@ let appData = {
   steps: 0, stepsHistory: [],
   medicines: [],
   medicineIntakes: [],
-  language: 'ru',
+  language: 'tr',
   apiKey: ''
 };
 
 let html5QrCode = null;
 let remindedMedsToday = new Set();
-let currentLanguage = 'ru';
+let currentLanguage = 'tr';
 
 function loadData() {
   const raw = localStorage.getItem('saglik_plus_v2');
@@ -608,7 +592,7 @@ function loadData() {
     try {
       const saved = JSON.parse(raw);
       appData = { ...appData, ...saved };
-      currentLanguage = appData.language || 'ru';
+      currentLanguage = appData.language || 'tr';
     } catch(e) { resetDefault(); }
   } else { resetDefault(); }
 }
@@ -619,13 +603,14 @@ function resetDefault() {
     water: 0, waterHistory: [],
     steps: 0, stepsHistory: [],
     medicines: [
-      { id: 1001, name: "Витамин D", dosage: "2000 МЕ", time: "09:00", instruction: "with-water", days: 0, createdAt: new Date().toISOString() },
-      { id: 1002, name: "Магний", dosage: "400 мг", time: "20:00", instruction: "with-meal", days: 0, createdAt: new Date().toISOString() }
+      { id: 1001, name: "D Vitamini", dosage: "2000 IU", time: "09:00", instruction: "with-water", days: 0, createdAt: new Date().toISOString() },
+      { id: 1002, name: "Magnezyum", dosage: "400 mg", time: "20:00", instruction: "with-meal", days: 0, createdAt: new Date().toISOString() }
     ],
     medicineIntakes: [],
-    language: 'ru',
+    language: 'tr',
     apiKey: ''
   };
+  currentLanguage = 'tr';
 }
 
 function save() { localStorage.setItem('saglik_plus_v2', JSON.stringify(appData)); }
@@ -692,7 +677,7 @@ function stopQrScanner() {
 
 function handleQr(data) {
   let parts = data.includes('|') ? data.split('|') : data.includes(',') ? data.split(',') : [data.trim(),'',''];
-  let name = parts[0]?.trim(), dosage = parts[1]?.trim() || '1 doze', time = parts[2]?.trim() || '—';
+  let name = parts[0]?.trim(), dosage = parts[1]?.trim() || '1 doz', time = parts[2]?.trim() || '—';
   if (!name) { toast(t('invalid_qr')); return; }
   addMedicineObject({ id: Date.now(), name, dosage, time, instruction: 'with-water', days: 0, createdAt: new Date().toISOString() });
   toast(t('qr_added') + name);
@@ -711,7 +696,7 @@ function generateMedQr(med) {
 
 function addNewMedicine() {
   let name = document.getElementById('med-name').value.trim();
-  let dosage = document.getElementById('med-dosage').value.trim() || '1 doze';
+  let dosage = document.getElementById('med-dosage').value.trim() || '1 doz';
   let time = document.getElementById('med-time').value || '—';
   let instruction = document.getElementById('med-instruction').value || '';
   let days = parseInt(document.getElementById('med-days').value) || 0;
@@ -796,6 +781,7 @@ function importData(event) {
       const data = JSON.parse(e.target.result);
       if (data.sleep !== undefined && data.medicines) {
         appData = data;
+        currentLanguage = appData.language || 'tr';
         save();
         updateAll();
         toast(t('data_imported'));
@@ -844,7 +830,7 @@ function drawCharts() {
   });
   chartInstances.water = new Chart(ctx2, {
     type: 'line',
-    data: { labels: last7, datasets: [{ label: 'мл', data: waterData, borderColor: '#0ea5e9', fill: false }] }
+    data: { labels: last7, datasets: [{ label: 'ml', data: waterData, borderColor: '#0ea5e9', fill: false }] }
   });
   chartInstances.steps = new Chart(ctx3, {
     type: 'bar',
@@ -881,6 +867,45 @@ function requestNotificationPermission() {
   if (Notification.permission === "default") Notification.requestPermission();
 }
 
+function updateAll() {
+  document.getElementById('sleep-display').innerText = appData.sleep + ' ' + t('hours');
+  document.getElementById('water-display').innerText = appData.water + ' ' + (t('ml') || 'ml');
+  document.getElementById('steps-display').innerText = appData.steps + ' ' + t('steps');
+  
+  const todayIntakes = appData.medicineIntakes.filter(i => i.dateStr === getTodayStr()).length;
+  document.getElementById('medicine-display').innerHTML = `${appData.medicines.length} ${t('medicines')}, ${todayIntakes} ${t('intakes')}`;
+  
+  if(document.getElementById('sleep-total')) document.getElementById('sleep-total').innerText = appData.sleep;
+  if(document.getElementById('water-total')) document.getElementById('water-total').innerText = appData.water;
+  if(document.getElementById('steps-total')) document.getElementById('steps-total').innerText = appData.steps;
+  if(document.getElementById('med-today-count')) document.getElementById('med-today-count').innerText = todayIntakes;
+  
+  renderHistory('sleep-history', appData.sleepHistory, 'hours', t('hours'));
+  renderHistory('water-history', appData.waterHistory, 'amount', (t('ml') || 'ml'));
+  renderHistory('steps-history', appData.stepsHistory, 'steps', t('steps'));
+  
+  renderMedicines();
+  renderIntakeHistory();
+  renderSchedule();
+  
+  if(document.getElementById('stats-sleep')) document.getElementById('stats-sleep').innerText = appData.sleep;
+  if(document.getElementById('stats-water')) document.getElementById('stats-water').innerText = appData.water;
+  if(document.getElementById('stats-steps')) document.getElementById('stats-steps').innerText = appData.steps;
+  if(document.getElementById('stats-medicine-count')) document.getElementById('stats-medicine-count').innerText = appData.medicines.length;
+  if(document.getElementById('stats-today-intakes')) document.getElementById('stats-today-intakes').innerText = todayIntakes;
+  
+  const now = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const locale =
+    currentLanguage === 'ar' ? 'ar-SA' :
+    currentLanguage === 'tr' ? 'tr-TR' :
+    currentLanguage === 'en' ? 'en-US' : 'ru-RU';
+  const dateStr = now.toLocaleDateString(locale, options);
+  document.getElementById('currentDate').innerText = dateStr;
+  
+  drawCharts();
+}
+
 function renderHistory(elId, arr, key, unit) {
   const el = document.getElementById(elId);
   if (!el) return;
@@ -909,7 +934,7 @@ function renderMedicines() {
         <button class="btn btn-small btn-outline" onclick="takeMedicine(${med.id})">💊 ${t('take_now')}</button>
         <button class="btn btn-small btn-outline" onclick="editMedicine(${med.id})">✏️ ${t('edit')}</button>
         <button class="btn btn-small" style="background:#fee2e2; color:#b91c1c;" onclick="deleteMedicine(${med.id})">🗑️ ${t('delete')}</button>
-        <div style="margin-left:auto;" title="QR код">${generateMedQr(med)}</div>
+        <div style="margin-left:auto;" title="QR kod">${generateMedQr(med)}</div>
       </div>
     </div>`;
   }).join('');
@@ -939,7 +964,7 @@ function addWater(ml) {
   appData.waterHistory.unshift({ date: getTodayStr(), amount: ml });
   save();
   updateAll();
-  toast(`💧 +${ml} мл`);
+  toast(`💧 +${ml} ${(t('ml') || 'ml')}`);
 }
 
 function addWaterManual() {
@@ -970,67 +995,6 @@ function clearAllData() {
     toast(`🗑️ ${t('data_cleared')}`);
   }
 }
-
-function updateAll() {
-  document.getElementById('sleep-display').innerText = appData.sleep + ' ' + t('hours');
-  document.getElementById('water-display').innerText = appData.water + ' мл';
-  document.getElementById('steps-display').innerText = appData.steps + ' ' + t('steps');
-  
-  const todayIntakes = appData.medicineIntakes.filter(i => i.dateStr === getTodayStr()).length;
-  document.getElementById('medicine-display').innerHTML = `${appData.medicines.length} ${t('medicines')}, ${todayIntakes} ${t('intakes')}`;
-  
-  if(document.getElementById('sleep-total')) document.getElementById('sleep-total').innerText = appData.sleep;
-  if(document.getElementById('water-total')) document.getElementById('water-total').innerText = appData.water;
-  if(document.getElementById('steps-total')) document.getElementById('steps-total').innerText = appData.steps;
-  if(document.getElementById('med-today-count')) document.getElementById('med-today-count').innerText = todayIntakes;
-  
-  renderHistory('sleep-history', appData.sleepHistory, 'hours', t('hours'));
-  renderHistory('water-history', appData.waterHistory, 'amount', 'мл');
-  renderHistory('steps-history', appData.stepsHistory, 'steps', t('steps'));
-  
-  renderMedicines();
-  renderIntakeHistory();
-  renderSchedule();
-  
-  if(document.getElementById('stats-sleep')) document.getElementById('stats-sleep').innerText = appData.sleep;
-  if(document.getElementById('stats-water')) document.getElementById('stats-water').innerText = appData.water;
-  if(document.getElementById('stats-steps')) document.getElementById('stats-steps').innerText = appData.steps;
-  if(document.getElementById('stats-medicine-count')) document.getElementById('stats-medicine-count').innerText = appData.medicines.length;
-  if(document.getElementById('stats-today-intakes')) document.getElementById('stats-today-intakes').innerText = todayIntakes;
-  
-  const now = new Date();
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  const locale =
-    currentLanguage === 'ar' ? 'ar-SA' :
-    currentLanguage === 'tr' ? 'tr-TR' :
-    currentLanguage === 'en' ? 'en-US' : 'ru-RU';
-  const dateStr = now.toLocaleDateString(locale, options);
-  document.getElementById('currentDate').innerText = dateStr;
-  
-  drawCharts();
-  applyI18nFromDataAttributes();
-}
-
-/* --- i18n: HTML tarafını otomatik güncelleyen katman --- */
-const _originalUpdateUILanguage = typeof window.updateUILanguage === 'function'
-  ? window.updateUILanguage
-  : null;
-
-function applyI18nFromDataAttributes() {
-  if (typeof t !== 'function') return;
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (!key) return;
-    const value = t(key);
-    if (value) el.textContent = value;
-  });
-}
-
-window.updateUILanguage = function() {
-  if (_originalUpdateUILanguage) _originalUpdateUILanguage();
-  applyI18nFromDataAttributes();
-};
-/* --- i18n katmanı sonu --- */
 
 window.addSleep = addSleep;
 window.addWater = addWater;
