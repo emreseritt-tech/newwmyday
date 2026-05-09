@@ -505,70 +505,97 @@ function getInstructionText(instruction) {
          instructionTranslations['ru']?.[instruction] || '';
 }
 
+
 function updateUILanguage() {
-  const updates = {
-    'header-title': 'header_title',
-    'card-sleep': 'card_sleep',
-    'card-water': 'card_water',
-    'card-steps': 'card_steps',
-    'card-medicine': 'card_medicine',
-    'card-schedule': 'card_schedule',
-    'card-ai': 'card_ai',
-    'nav-home': 'nav_home',
-    'nav-stats': 'nav_stats',
-    'nav-profile': 'nav_profile',
-    'header-sleep': 'header_sleep',
-    'sleep-add-title': 'sleep_add_title',
-    'sleep-save-btn': 'sleep_save_btn',
-    'sleep-history-title': 'sleep_history_title',
-    'unit-sleep-hours': 'sleep_hours_unit',
-    'header-water': 'header_water',
-    'water-quick-title': 'water_quick_title',
-    'water-add-btn': 'water_add_btn',
-    'water-history-title': 'water_history_title',
-    'unit-water': 'water_unit',
-    'header-steps': 'header_steps',
-    'steps-add-title': 'steps_add_title',
-    'steps-save-btn': 'steps_save_btn',
-    'steps-history-title': 'steps_history_title',
-    'unit-steps': 'steps',
-    'header-medicine': 'header_medicine',
-    'med-add-title': 'med_add_title',
-    'med-save-btn': 'med_save_btn',
-    'med-list-title': 'med_list_title',
-    'med-intake-history-title': 'med_intake_history_title',
-    'unit-med-intakes': 'medicine_intakes_unit',
-    'header-schedule': 'header_schedule',
-    'schedule-desc': 'schedule_desc',
-    'header-ai': 'header_ai',
-    'ai-title': 'ai_title',
-    'ai-send-btn': 'ai_send_btn',
-    'header-stats': 'header_stats',
-    'stat-sleep-title': 'stat_sleep_title',
-    'stat-water-title': 'stat_water_title',
-    'stat-steps-title': 'stat_steps_title',
-    'stat-med-title': 'stat_med_title',
-    'stat-intakes-title': 'stat_intakes_title',
-    'unit-stat-med': 'unit_stat_med',
-    'unit-stat-intakes': 'unit_stat_intakes',
-    'charts-btn': 'charts_btn',
-    'header-charts': 'header_charts',
-    'chart-sleep-title': 'chart_sleep_title',
-    'chart-water-title': 'chart_water_title',
-    'chart-steps-title': 'chart_steps_title',
-    'header-profile': 'header_profile',
-    'profile-title': 'profile_title',
-    'profile-desc': 'profile_desc',
-    'theme-label': 'theme_label',
-    'api-key-label': 'api_key_label',
-    'save-api-btn': 'save_api_btn',
-    'export-btn': 'export_btn',
-    'import-btn': 'import_btn',
-    'clear-btn': 'clear_btn'
+  document.querySelectorAll("[id]").forEach(el => {
+    const id = el.id;
+    if (translations[currentLanguage][id]) {
+      el.textContent = translations[currentLanguage][id];
+    }
+  });
+
+  // input placeholder çevirileri
+  document.querySelectorAll("[placeholder]").forEach(el => {
+    const key = el.getAttribute("placeholder");
+    if (translations[currentLanguage][key]) {
+      el.setAttribute("placeholder", translations[currentLanguage][key]);
+    }
+  });
+
+  // özel ID → KEY eşleştirmeleri
+  const map = {
+    "header-title": "header_title",
+    "card-sleep": "card_sleep",
+    "card-water": "card_water",
+    "card-steps": "card_steps",
+    "card-medicine": "card_medicine",
+    "card-schedule": "card_schedule",
+    "card-ai": "card_ai",
+
+    "nav-home": "nav_home",
+    "nav-stats": "nav_stats",
+    "nav-profile": "nav_profile",
+
+    "header-sleep": "header_sleep",
+    "sleep-add-title": "sleep_add_title",
+    "sleep-save-btn": "sleep_save_btn",
+    "sleep-history-title": "sleep_history_title",
+    "unit-sleep-hours": "sleep_hours_unit",
+
+    "header-water": "header_water",
+    "water-quick-title": "water_quick_title",
+    "water-add-btn": "water_add_btn",
+    "water-history-title": "water_history_title",
+    "unit-water": "water_unit",
+
+    "header-steps": "header_steps",
+    "steps-add-title": "steps_add_title",
+    "steps-save-btn": "steps_save_btn",
+    "steps-history-title": "steps_history_title",
+    "unit-steps": "steps",
+
+    "header-medicine": "header_medicine",
+    "med-add-title": "med_add_title",
+    "med-save-btn": "med_save_btn",
+    "med-list-title": "med_list_title",
+    "med-intake-history-title": "med_intake_history_title",
+    "unit-med-intakes": "medicine_intakes_unit",
+
+    "header-schedule": "header_schedule",
+    "schedule-desc": "schedule_desc",
+
+    "header-ai": "header_ai",
+    "ai-title": "ai_title",
+    "ai-send-btn": "ai_send_btn",
+
+    "header-stats": "header_stats",
+    "stat-sleep-title": "stat_sleep_title",
+    "stat-water-title": "stat_water_title",
+    "stat-steps-title": "stat_steps_title",
+    "stat-med-title": "stat_med_title",
+    "stat-intakes-title": "stat_intakes_title",
+    "unit-stat-med": "unit_stat_med",
+    "unit-stat-intakes": "unit_stat_intakes",
+    "charts-btn": "charts_btn",
+
+    "header-charts": "header_charts",
+    "chart-sleep-title": "chart_sleep_title",
+    "chart-water-title": "chart_water_title",
+    "chart-steps-title": "chart_steps_title",
+
+    "header-profile": "header_profile",
+    "profile-title": "profile_title",
+    "profile-desc": "profile_desc",
+    "theme-label": "theme_label",
+    "api-key-label": "api_key_label",
+    "save-api-btn": "save_api_btn",
+    "export-btn": "export_btn",
+    "import-btn": "import_btn",
+    "clear-btn": "clear_btn"
   };
-  
-  for (const [id, key] of Object.entries(updates)) {
+
+  for (const id in map) {
     const el = document.getElementById(id);
-    if (el) el.textContent = t(key);
+    if (el) el.textContent = t(map[id]);
   }
 }
