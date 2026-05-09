@@ -4,12 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>Здоровье+ | QR Медицина</title>
+
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="languages.js"></script>
 <script src="medicines.js"></script>
 <script src="schedule.js"></script>
 <script src="ai-assistant.js"></script>
+
 <style>
 :root {
   --bg: #f8fafc;
@@ -239,11 +241,19 @@ canvas { max-width: 100%; margin: 10px 0; }
 .schedule-row-night { background: #e9d5ff; }
 
 .ai-chat { background: var(--card-bg); border-radius: 24px; padding: 16px; margin-bottom: 16px; box-shadow: var(--card-shadow); }
-.ai-chat-header { font-weight: 700; color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.ai-chat-header { font-weight: 700; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
 .ai-chat-message { padding: 12px; background: var(--accent-light); border-radius: 12px; margin-bottom: 8px; font-size: 14px; line-height: 1.5; }
 .ai-chat-input-group { display: flex; gap: 8px; margin-top: 12px; flex-direction: column; }
 .ai-chat-input-group textarea { flex: 1; min-height: 60px; margin-bottom: 0; }
 .ai-chat-input-group button { width: 100%; padding: 10px 16px; margin: 0; }
+
+.ai-status {
+  font-size: 12px;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+.ai-online { color: #16a34a; }
+.ai-offline { color: #6b7280; }
 
 .med-instructions {
   background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px;
@@ -364,14 +374,27 @@ canvas { max-width: 100%; margin: 10px 0; }
 </div>
 
 <div id="ai-screen" class="screen">
-  <div class="header"><button class="back-btn" onclick="openScreen('dashboard')">←</button><h1 id="header-ai">🤖 AI Помощник</h1></div>
+  <div class="header">
+    <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+    <h1 id="header-ai">🤖 AI Помощник</h1>
+  </div>
   <div class="screen-content">
     <div class="ai-chat" id="aiChatContainer">
-      <div class="ai-chat-header">💬 <span id="ai-title">Здоровье Помощник</span></div>
+      <div class="ai-chat-header">
+        💬 <span id="ai-title">Здоровье Помощник</span>
+      </div>
+      <div id="ai-status" class="ai-status ai-offline">⚪ Offline (ipucu modu)</div>
       <div id="aiMessages"></div>
       <div class="ai-chat-input-group">
         <textarea id="aiQuestion" placeholder="Задайте вопрос о здоровье..." style="margin-bottom: 0;"></textarea>
-        <button class="btn" onclick="sendAiQuestion()" style="width: 100%; margin: 0; padding: 10px 16px;" id="ai-send-btn">Отправить</button>
+        <button
+          class="btn"
+          onclick="sendAiQuestion()"
+          style="width: 100%; margin: 0; padding: 10px 16px;"
+          id="ai-send-btn"
+        >
+          Отправить
+        </button>
       </div>
     </div>
   </div>
@@ -429,7 +452,7 @@ canvas { max-width: 100%; margin: 10px 0; }
       <option value="ocean">🌊 Океан</option>
       <option value="forest">🌲 Лес</option>
     </select>
-    <label id="api-key-label">OpenAI API Key (для AI помощника):</label>
+    <label id="api-key-label">DeepSeek API Key (для AI помощника):</label>
     <input type="password" id="apiKeyInput" placeholder="sk-..." style="margin-bottom: 12px;">
     <button class="btn" onclick="saveApiKey()" id="save-api-btn">💾 Сохранить API Key</button>
     <button class="btn" onclick="exportData()" id="export-btn">📁 Экспорт данных (JSON)</button>
@@ -502,10 +525,10 @@ function getTodayStr() { return new Date().toLocaleDateString('en-CA'); }
 function getTimeStr() { return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }); }
 function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 function toast(msg) { 
-  const t = document.getElementById('toast'); 
-  t.textContent = msg; 
-  t.classList.add('show'); 
-  setTimeout(() => t.classList.remove('show'), 2300); 
+  const tEl = document.getElementById('toast'); 
+  tEl.textContent = msg; 
+  tEl.classList.add('show'); 
+  setTimeout(() => tEl.classList.remove('show'), 2300); 
 }
 
 function setLanguage(lang) {
@@ -528,10 +551,12 @@ function changeTheme(theme) {
 function openScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const target = document.getElementById(`${id}-screen`);
-  if (target) target.classList.add('active');
+  if (target) {
+    target.classList.add('active');
+    target.scrollTop = 0;
+  }
   if (id === 'medicine') requestNotificationPermission();
   if (id === 'charts') drawCharts();
-  if (id === 'ai') { document.getElementById('apiKeyInput').value = appData.apiKey; }
   updateAll();
 }
 
@@ -595,7 +620,6 @@ function addNewMedicine() {
     days, 
     createdAt: new Date().toISOString() 
   };
-  
   addMedicineObject(med);
   document.getElementById('med-name').value = '';
   document.getElementById('med-dosage').value = '';
@@ -750,41 +774,6 @@ function requestNotificationPermission() {
   if (Notification.permission === "default") Notification.requestPermission();
 }
 
-function updateAll() {
-  document.getElementById('sleep-display').innerText = appData.sleep + ' ' + t('hours');
-  document.getElementById('water-display').innerText = appData.water + ' мл';
-  document.getElementById('steps-display').innerText = appData.steps + ' ' + t('steps');
-  
-  const todayIntakes = appData.medicineIntakes.filter(i => i.dateStr === getTodayStr()).length;
-  document.getElementById('medicine-display').innerHTML = `${appData.medicines.length} ${t('medicines')}, ${todayIntakes} ${t('intakes')}`;
-  
-  if(document.getElementById('sleep-total')) document.getElementById('sleep-total').innerText = appData.sleep;
-  if(document.getElementById('water-total')) document.getElementById('water-total').innerText = appData.water;
-  if(document.getElementById('steps-total')) document.getElementById('steps-total').innerText = appData.steps;
-  if(document.getElementById('med-today-count')) document.getElementById('med-today-count').innerText = todayIntakes;
-  
-  renderHistory('sleep-history', appData.sleepHistory, 'hours', t('hours'));
-  renderHistory('water-history', appData.waterHistory, 'amount', 'мл');
-  renderHistory('steps-history', appData.stepsHistory, 'steps', t('steps'));
-  
-  renderMedicines();
-  renderIntakeHistory();
-  renderSchedule();
-  
-  if(document.getElementById('stats-sleep')) document.getElementById('stats-sleep').innerText = appData.sleep;
-  if(document.getElementById('stats-water')) document.getElementById('stats-water').innerText = appData.water;
-  if(document.getElementById('stats-steps')) document.getElementById('stats-steps').innerText = appData.steps;
-  if(document.getElementById('stats-medicine-count')) document.getElementById('stats-medicine-count').innerText = appData.medicines.length;
-  if(document.getElementById('stats-today-intakes')) document.getElementById('stats-today-intakes').innerText = todayIntakes;
-  
-  const now = new Date();
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  const dateStr = now.toLocaleDateString(currentLanguage === 'ar' ? 'ar-SA' : currentLanguage === 'tr' ? 'tr-TR' : currentLanguage === 'en' ? 'en-US' : 'ru-RU', options);
-  document.getElementById('currentDate').innerText = dateStr;
-  
-  drawCharts();
-}
-
 function renderHistory(elId, arr, key, unit) {
   const el = document.getElementById(elId);
   if (!el) return;
@@ -873,6 +862,41 @@ function clearAllData() {
     updateAll();
     toast(`🗑️ ${t('data_cleared')}`);
   }
+}
+
+function updateAll() {
+  document.getElementById('sleep-display').innerText = appData.sleep + ' ' + t('hours');
+  document.getElementById('water-display').innerText = appData.water + ' мл';
+  document.getElementById('steps-display').innerText = appData.steps + ' ' + t('steps');
+  
+  const todayIntakes = appData.medicineIntakes.filter(i => i.dateStr === getTodayStr()).length;
+  document.getElementById('medicine-display').innerHTML = `${appData.medicines.length} ${t('medicines')}, ${todayIntakes} ${t('intakes')}`;
+  
+  if(document.getElementById('sleep-total')) document.getElementById('sleep-total').innerText = appData.sleep;
+  if(document.getElementById('water-total')) document.getElementById('water-total').innerText = appData.water;
+  if(document.getElementById('steps-total')) document.getElementById('steps-total').innerText = appData.steps;
+  if(document.getElementById('med-today-count')) document.getElementById('med-today-count').innerText = todayIntakes;
+  
+  renderHistory('sleep-history', appData.sleepHistory, 'hours', t('hours'));
+  renderHistory('water-history', appData.waterHistory, 'amount', 'мл');
+  renderHistory('steps-history', appData.stepsHistory, 'steps', t('steps'));
+  
+  renderMedicines();
+  renderIntakeHistory();
+  renderSchedule();
+  
+  if(document.getElementById('stats-sleep')) document.getElementById('stats-sleep').innerText = appData.sleep;
+  if(document.getElementById('stats-water')) document.getElementById('stats-water').innerText = appData.water;
+  if(document.getElementById('stats-steps')) document.getElementById('stats-steps').innerText = appData.steps;
+  if(document.getElementById('stats-medicine-count')) document.getElementById('stats-medicine-count').innerText = appData.medicines.length;
+  if(document.getElementById('stats-today-intakes')) document.getElementById('stats-today-intakes').innerText = todayIntakes;
+  
+  const now = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const dateStr = now.toLocaleDateString(currentLanguage === 'ar' ? 'ar-SA' : currentLanguage === 'tr' ? 'tr-TR' : currentLanguage === 'en' ? 'en-US' : 'ru-RU', options);
+  document.getElementById('currentDate').innerText = dateStr;
+  
+  drawCharts();
 }
 
 window.addSleep = addSleep;
