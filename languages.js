@@ -90,7 +90,7 @@ const translations = {
     'profile_title': 'Günüm — Pro + QR + AI',
     'profile_desc': 'Sağlık takibi + QR-kod + AI asistan',
     'theme_label': 'Tema:',
-    'api_key_label': 'OpenAI API Key (AI için):',
+    'api_key_label': 'DeepSeek API Key (AI için):',
     'save_api_btn': '💾 API Key Kaydet',
     'export_btn': '📁 Verileri Dışa Aktar (JSON)',
     'import_btn': '📂 Dosyadan İçe Aktar',
@@ -200,7 +200,7 @@ const translations = {
     'profile_title': 'يومي — Pro + QR + AI',
     'profile_desc': 'تتبع الصحة + رمز QR + مساعد ذكي',
     'theme_label': 'المظهر:',
-    'api_key_label': 'مفتاح OpenAI API (للمساعد الذكي):',
+    'api_key_label': 'مفتاح DeepSeek API (للمساعد الذكي):',
     'save_api_btn': '💾 حفظ API Key',
     'export_btn': '📁 تصدير البيانات (JSON)',
     'import_btn': '📂 استيراد من ملف',
@@ -309,7 +309,7 @@ const translations = {
     'profile_title': 'My Day — Pro + QR + AI',
     'profile_desc': 'Health tracking + QR-code + AI assistant',
     'theme_label': 'Theme:',
-    'api_key_label': 'OpenAI API Key (for AI):',
+    'api_key_label': 'DeepSeek API Key (for AI):',
     'save_api_btn': '💾 Save API Key',
     'export_btn': '📁 Export Data (JSON)',
     'import_btn': '📂 Import From File',
@@ -418,7 +418,7 @@ const translations = {
     'profile_title': 'Мой День — Pro + QR + AI',
     'profile_desc': 'Трекинг здоровья + QR-код + AI помощник',
     'theme_label': 'Тема:',
-    'api_key_label': 'OpenAI API Key (для AI помощника):',
+    'api_key_label': 'DeepSeek API Key (для AI помощника):',
     'save_api_btn': '💾 Сохранить API Key',
     'export_btn': '📁 Экспорт данных (JSON)',
     'import_btn': '📂 Импорт из файла',
@@ -496,13 +496,14 @@ const instructionTranslations = {
 };
 
 function t(key) {
-  return translations[currentLanguage]?.[key] || translations['ru']?.[key] || key;
+  // DİL KARIŞMASINI ÖNLEMEK İÇİN:
+  // Artık başka dile fallback YOK, sadece key döner.
+  return translations[currentLanguage]?.[key] || key;
 }
 
 function getInstructionText(instruction) {
   if (!instruction) return '';
-  return instructionTranslations[currentLanguage]?.[instruction] || 
-         instructionTranslations['ru']?.[instruction] || '';
+  return instructionTranslations[currentLanguage]?.[instruction] || '';
 }
 
 
@@ -514,7 +515,7 @@ function updateUILanguage() {
     }
   });
 
-  // input placeholder çevirileri
+  // input placeholder çevirileri (placeholder metni KEY ise çalışır)
   document.querySelectorAll("[placeholder]").forEach(el => {
     const key = el.getAttribute("placeholder");
     if (translations[currentLanguage][key]) {
