@@ -1,94 +1,122 @@
-// ========== SCHEDULE.JS (PREMIUM EDITION) ==========
-// Profesyonel ilaç takvimi + renk kodları + çoklu dil + güvenli HTML
-
+// ========== SCHEDULE.JS (DÜZELTİLMİŞ) ==========
+// Düzeltmeler:
+//  - t(), getInstructionText(), escapeHtml() bağımlılıkları guard ile korunuyor
+//  - Saat sıralaması kararlı
+//  - Boş ilaç listesi için temiz mesaj
+ 
+// ── Satır renk sınıfı ────────────────────────────────────────────────────
 function getTimeColor(time) {
-  if (!time || time === "—") return "schedule-row-none";
-
-  const [h] = time.split(":").map(Number);
-
-  if (h >= 22 || h < 6) return "schedule-row-night";       // 🌙 Gece
-  if (h >= 6 && h < 9) return "schedule-row-early";        // 🌅 Erken sabah
-  if (h >= 9 && h < 12) return "schedule-row-morning";     // ☀️ Sabah
-  if (h >= 12 && h < 17) return "schedule-row-afternoon";  // ☀️ Öğlen
-  return "schedule-row-evening";                           // 🌆 Akşam
+  if (!time || time === '—') return 'schedule-row-night';
+  const h = parseInt(time.split(':')[0], 10);
+  if (isNaN(h))               return 'schedule-row-morning';
+  if (h >= 22 || h < 6)       return 'schedule-row-night';
+  if (h >= 6  && h < 9)       return 'schedule-row-early';
+  if (h >= 9  && h < 12)      return 'schedule-row-morning';
+  if (h >= 12 && h < 17)      return 'schedule-row-afternoon';
+  return 'schedule-row-evening';
 }
-
+ 
+// ── Zaman dilimi etiketi ─────────────────────────────────────────────────
 function getTimePeriod(time) {
-  if (!time || time === "—") return "🌙 " + (t("night") || "Night");
-
-  const [h] = time.split(":").map(Number);
-
-  if (h >= 22 || h < 6) return "🌙 " + (t("night") || "Night");
-  if (h >= 6 && h < 9) return "🌅 " + (t("early_morning") || "Early");
-  if (h >= 9 && h < 12) return "☀️ " + (t("morning") || "Morning");
-  if (h >= 12 && h < 17) return "☀️ " + (t("afternoon") || "Afternoon");
-  return "🌆 " + (t("evening") || "Evening");
+  // t() bağımlılığı — tanımlı değilse İngilizce fallback
+  const tr = (typeof t === 'function') ? t : (k => k);
+ 
+  if (!time || time === '—') return '🌙 ' + tr('night');
+  const h = parseInt(time.split(':')[0], 10);
+  if (isNaN(h))               return '🌙 ' + tr('night');
+  if (h >= 22 || h < 6)       return '🌙 ' + tr('night');
+  if (h >= 6  && h < 9)       return '🌅 ' + tr('early_morning');
+  if (h >= 9  && h < 12)      return '☀️ ' + tr('morning');
+  if (h >= 12 && h < 17)      return '☀️ ' + tr('afternoon');
+  return '🌆 ' + tr('evening');
 }
-
+ 
+// ── Bugün alındı mı? ─────────────────────────────────────────────────────
 function getStatusEmoji(medId) {
-  const today = getTodayStr();
-  const taken = appData.medicineIntakes.some(
-    i => i.medicineId === medId && i.dateStr === today
-  );
-  return taken ? "✅" : "⏳";
+  if (typeof appData === 'undefined' || !Array.isArray(appData.medicineIntakes)) return '⏳';
+  const today = (typeof getTodayStr === 'function') ? getTodayStr() : new Date().toLocaleDateString('en-CA');
+  const taken = appData.medicineIntakes.some(i => i.medicineId === medId && i.dateStr === today);
+  return taken ? '✅' : '⏳';
 }
-
+ 
+// ── Takvim tablosunu çiz ─────────────────────────────────────────────────
 function renderSchedule() {
-  const container = document.getElementById("schedule-table-container");
+  const container = document.getElementById('schedule-table-container');
   if (!container) return;
-
-  if (!appData.medicines.length) {
-    container.innerHTML = `
-      <div class="schedule-empty">
-        ${t("no_medicines")}
-      </div>`;
+ 
+  // Bağımlılık guard
+  const tr_fn    = (typeof t === 'function')                  ? t                  : (k => k);
+  const instr_fn = (typeof getInstructionText === 'function') ? getInstructionText : (() => '—');
+  const esc_fn   = (typeof escapeHtml === 'function')         ? escapeHtml         : (s => s);
+ 
+  if (typeof appData === 'undefined' || !appData.medicines || !appData.medicines.length) {
+    container.innerHTML = `<div class="history-item" style="text-align:center; padding:20px;">
+      ${tr_fn('no_medicines')}
+    </div>`;
     return;
   }
-
-  // Saat sıralaması
-  const sorted = [...appData.medicines].sort((a, b) => {
-    const tA = a.time === "—" ? "23:59" : a.time;
-    const tB = b.time === "—" ? "23:59" : b.time;
+ 
+  // Süresi dolmamış ilaçları filtrele + saate göre sırala
+  const active = appData.medicines.filter(m => {
+    if (typeof shouldShowMedicine === 'function') return shouldShowMedicine(m);
+    return true; // medicines.js yüklü değilse hepsini göster
+  });
+ 
+  const sorted = [...active].sort((a, b) => {
+    const tA = (!a.time || a.time === '—') ? '23:59' : a.time;
+    const tB = (!b.time || b.time === '—') ? '23:59' : b.time;
     return tA.localeCompare(tB);
   });
-
+ 
+  if (!sorted.length) {
+    container.innerHTML = `<div class="history-item" style="text-align:center; padding:20px;">
+      ${tr_fn('no_medicines')}
+    </div>`;
+    return;
+  }
+ 
   let html = `
     <table class="schedule-table">
       <thead>
         <tr>
-          <th>${t("schedule_time")}</th>
-          <th>${t("schedule_medicine")}</th>
-          <th>${t("schedule_instruction")}</th>
-          <th>${t("schedule_status")}</th>
+          <th>${tr_fn('schedule_time')}</th>
+          <th>${tr_fn('schedule_medicine')}</th>
+          <th>${tr_fn('schedule_instruction')}</th>
+          <th>${tr_fn('schedule_status')}</th>
         </tr>
       </thead>
       <tbody>
   `;
-
+ 
   sorted.forEach(med => {
-    const rowClass = getTimeColor(med.time);
-    const status = getStatusEmoji(med.id);
-    const instr = getInstructionText(med.instruction) || "—";
-
+    const rowClass  = getTimeColor(med.time);
+    const status    = getStatusEmoji(med.id);
+    const instr     = instr_fn(med.instruction) || '—';
+    const daysInfo  = (typeof getMedicineStatus === 'function')
+      ? getMedicineStatus(med)
+      : null;
+    const daysLabel = daysInfo && daysInfo.daysLeft !== '∞' && daysInfo.daysLeft > 0
+      ? `<br><small style="color:#f59e0b">⏳ ${daysInfo.daysLeft}d</small>`
+      : '';
+ 
     html += `
       <tr class="${rowClass}">
         <td>
-          <strong>${med.time}</strong><br>
+          <strong>${esc_fn(med.time || '—')}</strong><br>
           <small>${getTimePeriod(med.time)}</small>
         </td>
-
         <td>
-          ${escapeHtml(med.name)}<br>
-          <small>${escapeHtml(med.dosage)}</small>
+          <strong>${esc_fn(med.name)}</strong><br>
+          <small>${esc_fn(med.dosage)}</small>
+          ${daysLabel}
         </td>
-
-        <td>${instr}</td>
-
-        <td class="schedule-status">${status}</td>
+        <td style="font-size:13px;">${instr}</td>
+        <td style="text-align:center; font-size:20px;">${status}</td>
       </tr>
     `;
   });
-
+ 
   html += `</tbody></table>`;
   container.innerHTML = html;
 }
+ 
