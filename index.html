@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>Здоровье+ | QR Медицина</title>
 
+<!-- Libs -->
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<!-- App modules -->
 <script src="languages.js"></script>
 <script src="medicines.js"></script>
 <script src="schedule.js"></script>
@@ -241,19 +244,11 @@ canvas { max-width: 100%; margin: 10px 0; }
 .schedule-row-night { background: #e9d5ff; }
 
 .ai-chat { background: var(--card-bg); border-radius: 24px; padding: 16px; margin-bottom: 16px; box-shadow: var(--card-shadow); }
-.ai-chat-header { font-weight: 700; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.ai-chat-header { font-weight: 700; color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
 .ai-chat-message { padding: 12px; background: var(--accent-light); border-radius: 12px; margin-bottom: 8px; font-size: 14px; line-height: 1.5; }
 .ai-chat-input-group { display: flex; gap: 8px; margin-top: 12px; flex-direction: column; }
 .ai-chat-input-group textarea { flex: 1; min-height: 60px; margin-bottom: 0; }
 .ai-chat-input-group button { width: 100%; padding: 10px 16px; margin: 0; }
-
-.ai-status {
-  font-size: 12px;
-  margin-bottom: 8px;
-  color: var(--text-secondary);
-}
-.ai-online { color: #16a34a; }
-.ai-offline { color: #6b7280; }
 
 .med-instructions {
   background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px;
@@ -269,10 +264,11 @@ canvas { max-width: 100%; margin: 10px 0; }
 <body>
 <div class="app-container">
 
+<!-- DASHBOARD -->
 <div id="dashboard-screen" class="screen active">
   <div class="header">
     <button class="lang-btn" onclick="toggleLangDropdown()">🌐</button>
-    <h1 id="header-title">💙 Мой День</h1>
+    <h1 id="header-title" data-i18n="header_title"></h1>
     <div class="date" id="currentDate"></div>
     <div class="lang-dropdown" id="langDropdown">
       <button onclick="setLanguage('tr')">🇹🇷 Türkçe</button>
@@ -282,196 +278,309 @@ canvas { max-width: 100%; margin: 10px 0; }
     </div>
   </div>
   <div class="dashboard-grid">
-    <button class="card" onclick="openScreen('sleep')"><div class="card-icon">😴</div><div class="card-content"><h3 id="card-sleep">Сон</h3><p id="sleep-display">0 часов</p></div></button>
-    <button class="card" onclick="openScreen('water')"><div class="card-icon">💧</div><div class="card-content"><h3 id="card-water">Вода</h3><p id="water-display">0 мл</p></div></button>
-    <button class="card" onclick="openScreen('steps')"><div class="card-icon">👟</div><div class="card-content"><h3 id="card-steps">Шаги</h3><p id="steps-display">0 шагов</p></div></button>
-    <button class="card" onclick="openScreen('medicine')"><div class="card-icon">💊</div><div class="card-content"><h3 id="card-medicine">Лекарства</h3><p id="medicine-display">0 препаратов</p></div></button>
-    <button class="card" onclick="openScreen('schedule')"><div class="card-icon">📅</div><div class="card-content"><h3 id="card-schedule">График</h3><p id="schedule-display">Просмотр</p></div></button>
-    <button class="card" onclick="openScreen('ai')"><div class="card-icon">🤖</div><div class="card-content"><h3 id="card-ai">AI Помощник</h3><p id="ai-display">Вопросы</p></div></button>
+    <button class="card" onclick="openScreen('sleep')">
+      <div class="card-icon">😴</div>
+      <div class="card-content">
+        <h3 id="card-sleep" data-i18n="card_sleep"></h3>
+        <p id="sleep-display">0</p>
+      </div>
+    </button>
+    <button class="card" onclick="openScreen('water')">
+      <div class="card-icon">💧</div>
+      <div class="card-content">
+        <h3 id="card-water" data-i18n="card_water"></h3>
+        <p id="water-display">0</p>
+      </div>
+    </button>
+    <button class="card" onclick="openScreen('steps')">
+      <div class="card-icon">👟</div>
+      <div class="card-content">
+        <h3 id="card-steps" data-i18n="card_steps"></h3>
+        <p id="steps-display">0</p>
+      </div>
+    </button>
+    <button class="card" onclick="openScreen('medicine')">
+      <div class="card-icon">💊</div>
+      <div class="card-content">
+        <h3 id="card-medicine" data-i18n="card_medicine"></h3>
+        <p id="medicine-display">0</p>
+      </div>
+    </button>
+    <button class="card" onclick="openScreen('schedule')">
+      <div class="card-icon">📅</div>
+      <div class="card-content">
+        <h3 id="card-schedule" data-i18n="card_schedule"></h3>
+        <p id="schedule-display" data-i18n="schedule_view"></p>
+      </div>
+    </button>
+    <button class="card" onclick="openScreen('ai')">
+      <div class="card-icon">🤖</div>
+      <div class="card-content">
+        <h3 id="card-ai" data-i18n="card_ai"></h3>
+        <p id="ai-display" data-i18n="ai_questions"></p>
+      </div>
+    </button>
   </div>
   <div class="bottom-nav">
-    <button class="nav-btn active" onclick="openScreen('dashboard')"><span class="icon">🏠</span><span id="nav-home">Главная</span></button>
-    <button class="nav-btn" onclick="openScreen('stats')"><span class="icon">📊</span><span id="nav-stats">Статистика</span></button>
-    <button class="nav-btn" onclick="openScreen('profile')"><span class="icon">👤</span><span id="nav-profile">Профиль</span></button>
+    <button class="nav-btn active" onclick="openScreen('dashboard')">
+      <span class="icon">🏠</span><span id="nav-home" data-i18n="nav_home"></span>
+    </button>
+    <button class="nav-btn" onclick="openScreen('stats')">
+      <span class="icon">📊</span><span id="nav-stats" data-i18n="nav_stats"></span>
+    </button>
+    <button class="nav-btn" onclick="openScreen('profile')">
+      <span class="icon">👤</span><span id="nav-profile" data-i18n="nav_profile"></span>
+    </button>
   </div>
 </div>
 
+<!-- SLEEP -->
 <div id="sleep-screen" class="screen">
-  <div class="header"><button class="back-btn" onclick="openScreen('dashboard')">←</button><h1 id="header-sleep">😴 Сон</h1></div>
+  <div class="header">
+    <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+    <h1 id="header-sleep" data-i18n="header_sleep"></h1>
+  </div>
   <div class="screen-content">
-    <div class="stat-card"><div class="big-number" id="sleep-total">0</div><div class="unit" id="unit-sleep-hours">часов сегодня</div></div>
-    <h2 id="sleep-add-title">Добавить сон</h2>
+    <div class="stat-card">
+      <div class="big-number" id="sleep-total">0</div>
+      <div class="unit" id="unit-sleep-hours" data-i18n="unit_sleep_today"></div>
+    </div>
+    <h2 id="sleep-add-title" data-i18n="sleep_add"></h2>
     <input type="number" id="sleep-input" placeholder="Часы сна" min="0" max="24" step="0.5">
-    <button class="btn" onclick="addSleep()" id="sleep-save-btn">💾 Сохранить</button>
-    <h2 id="sleep-history-title">История сна</h2>
+    <button class="btn" onclick="addSleep()" id="sleep-save-btn" data-i18n="btn_save_sleep"></button>
+    <h2 id="sleep-history-title" data-i18n="sleep_history"></h2>
     <div id="sleep-history" class="history-list"></div>
   </div>
 </div>
 
+<!-- WATER -->
 <div id="water-screen" class="screen">
-  <div class="header"><button class="back-btn" onclick="openScreen('dashboard')">←</button><h1 id="header-water">💧 Вода</h1></div>
+  <div class="header">
+    <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+    <h1 id="header-water" data-i18n="header_water"></h1>
+  </div>
   <div class="screen-content">
-    <div class="stat-card"><div class="big-number" id="water-total">0</div><div class="unit" id="unit-water">мл сегодня (цель: 2000 мл)</div></div>
-    <h2 id="water-quick-title">Быстрое добавление</h2>
-    <button class="btn btn-small" onclick="addWater(100)">+100 мл</button>
-    <button class="btn btn-small" onclick="addWater(250)">+250 мл</button>
-    <button class="btn btn-small" onclick="addWater(500)">+500 мл</button>
+    <div class="stat-card">
+      <div class="big-number" id="water-total">0</div>
+      <div class="unit" id="unit-water" data-i18n="unit_water_today"></div>
+    </div>
+    <h2 id="water-quick-title" data-i18n="water_quick_add"></h2>
+    <button class="btn btn-small" onclick="addWater(100)" data-i18n="water_100"></button>
+    <button class="btn btn-small" onclick="addWater(250)" data-i18n="water_250"></button>
+    <button class="btn btn-small" onclick="addWater(500)" data-i18n="water_500"></button>
     <br><br>
     <input type="number" id="water-input" placeholder="Другой объем (мл)">
-    <button class="btn" onclick="addWaterManual()" id="water-add-btn">💾 Добавить</button>
-    <h2 id="water-history-title">История воды</h2>
+    <button class="btn" onclick="addWaterManual()" id="water-add-btn" data-i18n="water_add_btn"></button>
+    <h2 id="water-history-title" data-i18n="water_history"></h2>
     <div id="water-history" class="history-list"></div>
   </div>
 </div>
 
+<!-- STEPS -->
 <div id="steps-screen" class="screen">
-  <div class="header"><button class="back-btn" onclick="openScreen('dashboard')">←</button><h1 id="header-steps">👟 Шаги</h1></div>
+  <div class="header">
+    <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+    <h1 id="header-steps" data-i18n="header_steps"></h1>
+  </div>
   <div class="screen-content">
-    <div class="stat-card"><div class="big-number" id="steps-total">0</div><div class="unit" id="unit-steps">шагов сегодня</div></div>
-    <h2 id="steps-add-title">Добавить шаги</h2>
+    <div class="stat-card">
+      <div class="big-number" id="steps-total">0</div>
+      <div class="unit" id="unit-steps" data-i18n="unit_steps_today"></div>
+    </div>
+    <h2 id="steps-add-title" data-i18n="steps_add"></h2>
     <input type="number" id="steps-input" placeholder="Количество шагов">
-    <button class="btn" onclick="addSteps()" id="steps-save-btn">💾 Сохранить</button>
-    <h2 id="steps-history-title">История шагов</h2>
+    <button class="btn" onclick="addSteps()" id="steps-save-btn" data-i18n="btn_save_steps"></button>
+    <h2 id="steps-history-title" data-i18n="steps_history"></h2>
     <div id="steps-history" class="history-list"></div>
   </div>
 </div>
 
+<!-- MEDICINE -->
 <div id="medicine-screen" class="screen">
-  <div class="header"><button class="back-btn" onclick="openScreen('dashboard')">←</button><h1 id="header-medicine">💊 Лекарства + QR</h1></div>
+  <div class="header">
+    <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+    <h1 id="header-medicine" data-i18n="header_medicine"></h1>
+  </div>
   <div class="screen-content">
-    <div class="stat-card"><div class="big-number" id="med-today-count">0</div><div class="unit" id="unit-med-intakes">приёмов сегодня</div></div>
-    <h2 id="med-add-title">➕ Добавить лекарство</h2>
+    <div class="stat-card">
+      <div class="big-number" id="med-today-count">0</div>
+      <div class="unit" id="unit-med-intakes" data-i18n="unit_med_intakes"></div>
+    </div>
+    <h2 id="med-add-title" data-i18n="med_add_title"></h2>
     <input type="text" id="med-name" placeholder="Название (например, Парацетамол)" autocomplete="off">
     <input type="text" id="med-dosage" placeholder="Дозировка (например, 500мг / 1 таб.)" autocomplete="off">
     <input type="time" id="med-time" placeholder="Время приёма (необязательно)">
     <select id="med-instruction" style="margin-bottom: 12px;">
-      <option value="">Выберите инструкцию...</option>
-      <option value="before-meal">Перед едой</option>
-      <option value="with-meal">С едой</option>
-      <option value="after-meal">После еды</option>
-      <option value="with-water">С водой</option>
-      <option value="with-milk">С молоком</option>
-      <option value="no-chew">Не жевать</option>
-      <option value="dissolve">Растворить</option>
-      <option value="other">Другое</option>
+      <option value="" data-i18n="med_instr_placeholder"></option>
+      <option value="before-meal" data-i18n="med_instr_before_meal"></option>
+      <option value="with-meal" data-i18n="med_instr_with_meal"></option>
+      <option value="after-meal" data-i18n="med_instr_after_meal"></option>
+      <option value="with-water" data-i18n="med_instr_with_water"></option>
+      <option value="with-milk" data-i18n="med_instr_with_milk"></option>
+      <option value="no-chew" data-i18n="med_instr_no_chew"></option>
+      <option value="dissolve" data-i18n="med_instr_dissolve"></option>
+      <option value="other" data-i18n="med_instr_other"></option>
     </select>
     <input type="number" id="med-days" placeholder="Количество дней (0 = бесконечно)" min="0" value="0">
-    <button class="btn" onclick="addNewMedicine()" id="med-save-btn">💾 Сохранить вручную</button>
-    <button class="btn btn-outline" id="qrScanBtn" onclick="startQrScanner()">📷 Сканировать QR</button>
-    <h2 id="med-list-title">📋 Мои лекарства</h2>
-    <div id="medicine-list-container" class="medicine-list-area">-- загрузка --</div>
-    <h2 id="med-intake-history-title">📜 История приёмов</h2>
+    <button class="btn" onclick="addNewMedicine()" id="med-save-btn" data-i18n="med_save_manual"></button>
+    <button class="btn btn-outline" id="qrScanBtn" onclick="startQrScanner()" data-i18n="med_scan_qr"></button>
+    <h2 id="med-list-title" data-i18n="med_list_title"></h2>
+    <div id="medicine-list-container" class="medicine-list-area">--</div>
+    <h2 id="med-intake-history-title" data-i18n="med_intake_history_title"></h2>
     <div id="intake-history-list" class="history-list"></div>
   </div>
 </div>
 
+<!-- SCHEDULE -->
 <div id="schedule-screen" class="screen">
-  <div class="header"><button class="back-btn" onclick="openScreen('dashboard')">←</button><h1 id="header-schedule">📅 График на день</h1></div>
+  <div class="header">
+    <button class="back-btn" onclick="openScreen('dashboard')">←</button>
+    <h1 id="header-schedule" data-i18n="header_schedule"></h1>
+  </div>
   <div class="screen-content">
-    <p id="schedule-desc" style="color: var(--text-secondary); margin-bottom: 16px;">Полный график приёма лекарств на сегодня с рекомендациями</p>
+    <p id="schedule-desc" style="color: var(--text-secondary); margin-bottom: 16px;" data-i18n="schedule_desc"></p>
     <div id="schedule-table-container"></div>
   </div>
 </div>
 
+<!-- AI -->
 <div id="ai-screen" class="screen">
   <div class="header">
     <button class="back-btn" onclick="openScreen('dashboard')">←</button>
-    <h1 id="header-ai">🤖 AI Помощник</h1>
+    <h1 id="header-ai" data-i18n="header_ai"></h1>
   </div>
   <div class="screen-content">
     <div class="ai-chat" id="aiChatContainer">
       <div class="ai-chat-header">
-        💬 <span id="ai-title">Здоровье Помощник</span>
+        💬 <span id="ai-title" data-i18n="ai_title"></span>
       </div>
-      <div id="ai-status" class="ai-status ai-offline">⚪ Offline (ipucu modu)</div>
       <div id="aiMessages"></div>
       <div class="ai-chat-input-group">
         <textarea id="aiQuestion" placeholder="Задайте вопрос о здоровье..." style="margin-bottom: 0;"></textarea>
-        <button
-          class="btn"
-          onclick="sendAiQuestion()"
-          style="width: 100%; margin: 0; padding: 10px 16px;"
-          id="ai-send-btn"
-        >
-          Отправить
-        </button>
+        <button class="btn" onclick="sendAiQuestion()" style="width: 100%; margin: 0; padding: 10px 16px;" id="ai-send-btn" data-i18n="ai_send_btn"></button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- STATS -->
 <div id="stats-screen" class="screen">
-  <div class="header"><h1 id="header-stats">📊 Статистика</h1></div>
+  <div class="header">
+    <h1 id="header-stats" data-i18n="header_stats"></h1>
+  </div>
   <div class="screen-content">
-    <div class="stat-card"><h3 id="stat-sleep-title">😴 Сон (сегодня)</h3><div class="big-number" id="stats-sleep">0</div><div class="unit">часов</div></div>
-    <div class="stat-card"><h3 id="stat-water-title">💧 Вода</h3><div class="big-number" id="stats-water">0</div><div class="unit">мл</div></div>
-    <div class="stat-card"><h3 id="stat-steps-title">👟 Шаги</h3><div class="big-number" id="stats-steps">0</div><div class="unit">шагов</div></div>
-    <div class="stat-card"><h3 id="stat-med-title">💊 Лекарства</h3><div class="big-number" id="stats-medicine-count">0</div><div class="unit" id="unit-stat-med">активных препаратов</div></div>
-    <div class="stat-card"><h3 id="stat-intakes-title">✅ Приёмы сегодня</h3><div class="big-number" id="stats-today-intakes">0</div><div class="unit" id="unit-stat-intakes">зафиксированных приёмов</div></div>
-    <button class="btn" onclick="openScreen('charts')" id="charts-btn">📈 Недельные графики</button>
+    <div class="stat-card">
+      <h3 id="stat-sleep-title" data-i18n="stat_sleep_title"></h3>
+      <div class="big-number" id="stats-sleep">0</div>
+      <div class="unit" data-i18n="unit_hours"></div>
+    </div>
+    <div class="stat-card">
+      <h3 id="stat-water-title" data-i18n="stat_water_title"></h3>
+      <div class="big-number" id="stats-water">0</div>
+      <div class="unit" data-i18n="unit_ml"></div>
+    </div>
+    <div class="stat-card">
+      <h3 id="stat-steps-title" data-i18n="stat_steps_title"></h3>
+      <div class="big-number" id="stats-steps">0</div>
+      <div class="unit" data-i18n="unit_steps"></div>
+    </div>
+    <div class="stat-card">
+      <h3 id="stat-med-title" data-i18n="stat_med_title"></h3>
+      <div class="big-number" id="stats-medicine-count">0</div>
+      <div class="unit" id="unit-stat-med" data-i18n="unit_stat_med"></div>
+    </div>
+    <div class="stat-card">
+      <h3 id="stat-intakes-title" data-i18n="stat_intakes_title"></h3>
+      <div class="big-number" id="stats-today-intakes">0</div>
+      <div class="unit" id="unit-stat-intakes" data-i18n="unit_stat_intakes"></div>
+    </div>
+    <button class="btn" onclick="openScreen('charts')" id="charts-btn" data-i18n="charts_btn"></button>
   </div>
   <div class="bottom-nav">
-    <button class="nav-btn" onclick="openScreen('dashboard')"><span class="icon">🏠</span><span id="nav-stats-home">Главная</span></button>
-    <button class="nav-btn active"><span class="icon">📊</span><span id="nav-stats-active">Статистика</span></button>
-    <button class="nav-btn" onclick="openScreen('profile')"><span class="icon">👤</span><span id="nav-stats-profile">Профиль</span></button>
+    <button class="nav-btn" onclick="openScreen('dashboard')">
+      <span class="icon">🏠</span><span id="nav-stats-home" data-i18n="nav_home"></span>
+    </button>
+    <button class="nav-btn active">
+      <span class="icon">📊</span><span id="nav-stats-active" data-i18n="nav_stats"></span>
+    </button>
+    <button class="nav-btn" onclick="openScreen('profile')">
+      <span class="icon">👤</span><span id="nav-stats-profile" data-i18n="nav_profile"></span>
+    </button>
   </div>
 </div>
 
+<!-- CHARTS -->
 <div id="charts-screen" class="screen">
-  <div class="header"><button class="back-btn" onclick="openScreen('stats')">←</button><h1 id="header-charts">📈 Недельные графики</h1></div>
+  <div class="header">
+    <button class="back-btn" onclick="openScreen('stats')">←</button>
+    <h1 id="header-charts" data-i18n="header_charts"></h1>
+  </div>
   <div class="screen-content">
     <div class="stat-card">
-      <h3 id="chart-sleep-title">😴 Сон за 7 дней</h3>
+      <h3 id="chart-sleep-title" data-i18n="chart_sleep_title"></h3>
       <canvas id="sleepChart" width="300" height="150"></canvas>
     </div>
     <div class="stat-card">
-      <h3 id="chart-water-title">💧 Вода за 7 дней</h3>
+      <h3 id="chart-water-title" data-i18n="chart_water_title"></h3>
       <canvas id="waterChart" width="300" height="150"></canvas>
     </div>
     <div class="stat-card">
-      <h3 id="chart-steps-title">👟 Шаги за 7 дней</h3>
+      <h3 id="chart-steps-title" data-i18n="chart_steps_title"></h3>
       <canvas id="stepsChart" width="300" height="150"></canvas>
     </div>
   </div>
 </div>
 
+<!-- PROFILE -->
 <div id="profile-screen" class="screen">
-  <div class="header"><h1 id="header-profile">👤 Профиль</h1></div>
+  <div class="header">
+    <h1 id="header-profile" data-i18n="header_profile"></h1>
+  </div>
   <div class="screen-content">
     <div class="profile-avatar">💊❤️</div>
     <div class="stat-card">
-      <h3 id="profile-title">Мой День — Pro + QR + AI</h3>
-      <p id="profile-desc">Трекинг здоровья + QR-код + AI помощник</p>
+      <h3 id="profile-title" data-i18n="profile_title"></h3>
+      <p id="profile-desc" data-i18n="profile_desc"></p>
       <p>ННГУ им. Лобачевского</p>
       <p>Группа 3825Б1ПР3</p>
     </div>
-    <label id="theme-label">Тема:</label>
+    <label id="theme-label" data-i18n="theme_label"></label>
     <select id="themeSelector" onchange="changeTheme(this.value)" style="margin-bottom: 12px;">
-      <option value="light">🌞 Светлая тема</option>
-      <option value="dark">🌙 Тёмная тема</option>
-      <option value="ocean">🌊 Океан</option>
-      <option value="forest">🌲 Лес</option>
+      <option value="light" data-i18n="theme_light"></option>
+      <option value="dark" data-i18n="theme_dark"></option>
+      <option value="ocean" data-i18n="theme_ocean"></option>
+      <option value="forest" data-i18n="theme_forest"></option>
     </select>
-    <label id="api-key-label">DeepSeek API Key (для AI помощника):</label>
+    <label id="api-key-label" data-i18n="api_key_label"></label>
     <input type="password" id="apiKeyInput" placeholder="sk-..." style="margin-bottom: 12px;">
-    <button class="btn" onclick="saveApiKey()" id="save-api-btn">💾 Сохранить API Key</button>
-    <button class="btn" onclick="exportData()" id="export-btn">📁 Экспорт данных (JSON)</button>
-    <button class="btn btn-outline" onclick="document.getElementById('importFile').click()" id="import-btn">📂 Импорт из файла</button>
+    <button class="btn" onclick="saveApiKey()" id="save-api-btn" data-i18n="save_api_btn"></button>
+    <button class="btn" onclick="exportData()" id="export-btn" data-i18n="export_btn"></button>
+    <button class="btn btn-outline" onclick="document.getElementById('importFile').click()" id="import-btn" data-i18n="import_btn"></button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-    <button class="btn" style="background:#b91c1c; margin-top:20px;" onclick="clearAllData()" id="clear-btn">🗑️ Удалить все данные</button>
+    <button class="btn" style="background:#b91c1c; margin-top:20px;" onclick="clearAllData()" id="clear-btn" data-i18n="clear_btn"></button>
   </div>
   <div class="bottom-nav">
-    <button class="nav-btn" onclick="openScreen('dashboard')"><span class="icon">🏠</span><span id="nav-profile-home">Главная</span></button>
-    <button class="nav-btn" onclick="openScreen('stats')"><span class="icon">📊</span><span id="nav-profile-stats">Статистика</span></button>
-    <button class="nav-btn active"><span class="icon">👤</span><span id="nav-profile-active">Профиль</span></button>
+    <button class="nav-btn" onclick="openScreen('dashboard')">
+      <span class="icon">🏠</span><span id="nav-profile-home" data-i18n="nav_home"></span>
+    </button>
+    <button class="nav-btn" onclick="openScreen('stats')">
+      <span class="icon">📊</span><span id="nav-profile-stats" data-i18n="nav_stats"></span>
+    </button>
+    <button class="nav-btn active">
+      <span class="icon">👤</span><span id="nav-profile-active" data-i18n="nav_profile"></span>
+    </button>
   </div>
 </div>
 
+<!-- QR MODAL -->
 <div id="qrModal" class="qr-modal">
   <div class="qr-container">
-    <div class="qr-header"><span id="qr-header-text">📷 Наведите камеру на QR-код</span><button id="closeQrModalBtn" onclick="stopQrScanner(); document.getElementById('qrModal').classList.remove('active');">&times;</button></div>
+    <div class="qr-header">
+      <span id="qr-header-text" data-i18n="qr_header_text"></span>
+      <button id="closeQrModalBtn" onclick="stopQrScanner(); document.getElementById('qrModal').classList.remove('active');">&times;</button>
+    </div>
     <div id="qr-reader"></div>
-    <div class="qr-info" id="qr-info">🔍 Ожидание сканирования...</div>
+    <div class="qr-info" id="qr-info" data-i18n="qr_info_wait"></div>
   </div>
 </div>
 
@@ -551,12 +660,10 @@ function changeTheme(theme) {
 function openScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const target = document.getElementById(`${id}-screen`);
-  if (target) {
-    target.classList.add('active');
-    target.scrollTop = 0;
-  }
+  if (target) target.classList.add('active');
   if (id === 'medicine') requestNotificationPermission();
   if (id === 'charts') drawCharts();
+  if (id === 'ai') { document.getElementById('apiKeyInput').value = appData.apiKey; }
   updateAll();
 }
 
@@ -893,11 +1000,37 @@ function updateAll() {
   
   const now = new Date();
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  const dateStr = now.toLocaleDateString(currentLanguage === 'ar' ? 'ar-SA' : currentLanguage === 'tr' ? 'tr-TR' : currentLanguage === 'en' ? 'en-US' : 'ru-RU', options);
+  const locale =
+    currentLanguage === 'ar' ? 'ar-SA' :
+    currentLanguage === 'tr' ? 'tr-TR' :
+    currentLanguage === 'en' ? 'en-US' : 'ru-RU';
+  const dateStr = now.toLocaleDateString(locale, options);
   document.getElementById('currentDate').innerText = dateStr;
   
   drawCharts();
+  applyI18nFromDataAttributes();
 }
+
+/* --- i18n: HTML tarafını otomatik güncelleyen katman --- */
+const _originalUpdateUILanguage = typeof window.updateUILanguage === 'function'
+  ? window.updateUILanguage
+  : null;
+
+function applyI18nFromDataAttributes() {
+  if (typeof t !== 'function') return;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (!key) return;
+    const value = t(key);
+    if (value) el.textContent = value;
+  });
+}
+
+window.updateUILanguage = function() {
+  if (_originalUpdateUILanguage) _originalUpdateUILanguage();
+  applyI18nFromDataAttributes();
+};
+/* --- i18n katmanı sonu --- */
 
 window.addSleep = addSleep;
 window.addWater = addWater;
