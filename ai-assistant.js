@@ -1,122 +1,127 @@
-// ========== AI-ASSISTANT.JS ==========
-// OpenAI API entegrasyonu + Fallback sağlık ipuçları
+// ========== AI-ASSISTANT.JS (PREMIUM EDITION) ==========
+// En iyi performans + gpt-4o-mini + güvenli + hızlı
+
+const healthTips = {
+  tr: [
+    "💧 Günde en az 2 litre su içmeyi unutmayın.",
+    "😴 Her gece 7-8 saat uyumaya çalışın.",
+    "🏃 Haftada 150 dakika egzersiz yapın.",
+    "🥗 Omega-3 için balık tüketin.",
+    "🧘 Meditasyon stresinizi azaltır.",
+    "☀️ Sabah güneş ışığı alın.",
+    "📱 Uyumadan önce ekranlardan uzak durun.",
+    "🍎 Günde 5 porsiyon sebze-meyve tüketin."
+  ],
+  ar: [
+    "💧 اشرب 2 لتر ماء يومياً.",
+    "😴 نم 7-8 ساعات كل ليلة.",
+    "🏃 مارس 150 دقيقة من الرياضة أسبوعياً.",
+    "🥗 تناول الأسماك الدهنية.",
+    "🧘 جرّب التأمل لتقليل التوتر.",
+    "☀️ تعرّض لضوء الشمس صباحاً.",
+    "📱 ابتعد عن الشاشات قبل النوم.",
+    "🍎 تناول 5 حصص من الخضار والفواكه."
+  ],
+  en: [
+    "💧 Drink at least 2 liters of water daily.",
+    "😴 Aim for 7–8 hours of sleep.",
+    "🏃 Exercise 150 minutes weekly.",
+    "🥗 Add fatty fish to your diet.",
+    "🧘 Try meditation to reduce stress.",
+    "☀️ Get morning sunlight.",
+    "📱 Avoid screens before bed.",
+    "🍎 Eat 5 servings of fruits/vegetables."
+  ],
+  ru: [
+    "💧 Пейте 2 литра воды ежедневно.",
+    "😴 Спите 7–8 часов.",
+    "🏃 Упражняйтесь 150 минут в неделю.",
+    "🥗 Ешьте жирную рыбу.",
+    "🧘 Попробуйте медитацию.",
+    "☀️ Получайте утренний солнечный свет.",
+    "📱 Избегайте экранов перед сном.",
+    "🍎 Ешьте 5 порций овощей и фруктов."
+  ]
+};
+
+// Güvenli HTML escape
+function escapeHtml(text) {
+  return text.replace(/[&<>"']/g, m => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  }[m]));
+}
 
 async function sendAiQuestion() {
-  const question = document.getElementById('aiQuestion').value.trim();
-  if (!question) return;
-  
-  const messagesDiv = document.getElementById('aiMessages');
-  messagesDiv.innerHTML += `<div class="ai-chat-message"><strong>❓ Siz:</strong> ${escapeHtml(question)}</div>`;
-  
-  document.getElementById('aiQuestion').value = '';
-  
-  const context = `
-    User Health Data:
-    - Sleep: ${appData.sleep} hours
-    - Water: ${appData.water} ml
-    - Steps: ${appData.steps}
-    - Active Medicines: ${appData.medicines.length}
-    - Today's Intakes: ${appData.medicineIntakes.filter(i => i.dateStr === getTodayStr()).length}
-    - Language: ${currentLanguage}
-  `;
-  
+  const input = document.getElementById("aiQuestion");
+  const msgBox = document.getElementById("aiMessages");
+  const question = input.value.trim();
+
+  if (!question) {
+    toast(t("enter_name"));
+    return;
+  }
+
+  // Kullanıcı mesajını ekle
+  msgBox.innerHTML += `<div class="ai-chat-message"><strong>🧑:</strong> ${escapeHtml(question)}</div>`;
+  msgBox.scrollTop = msgBox.scrollHeight;
+  input.value = "";
+
+  const apiKey = appData.apiKey;
+
+  // === OFFLINE MOD ===
+  if (!apiKey) {
+    const tip = healthTips[currentLanguage][Math.floor(Math.random() * healthTips[currentLanguage].length)];
+    msgBox.innerHTML += `<div class="ai-chat-message"><strong>🤖 (Offline):</strong> ${tip}</div>`;
+    msgBox.scrollTop = msgBox.scrollHeight;
+    return;
+  }
+
+  // === ONLINE MOD ===
   try {
-    if (appData.apiKey) {
-      await callOpenAiApi(question, context, messagesDiv);
+    const context = `
+Сон: ${appData.sleep} ч
+Вода: ${appData.water} мл
+Шаги: ${appData.steps}
+Лекарства: ${appData.medicines.map(m => m.name + " (" + m.dosage + ")").join(", ")}
+Приёмов сегодня: ${appData.medicineIntakes.filter(i => i.dateStr === getTodayStr()).length}
+    `;
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: `Ты — врач-консультант. Отвечай кратко (1–2 предложения) на языке ${currentLanguage}. Контекст: ${context}`
+          },
+          {
+            role: "user",
+            content: question
+          }
+        ],
+        max_tokens: 200,
+        temperature: 0.5
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      msgBox.innerHTML += `<div class="ai-chat-message"><strong>🤖:</strong> ❌ ${escapeHtml(data.error?.message || "API error")}</div>`;
     } else {
-      provideOfflineSuggestion(question, messagesDiv);
+      const answer = data.choices?.[0]?.message?.content || "Ответ не получен.";
+      msgBox.innerHTML += `<div class="ai-chat-message"><strong>🤖:</strong> ${escapeHtml(answer)}</div>`;
     }
-  } catch (error) {
-    console.error('AI Error:', error);
-    provideOfflineSuggestion(question, messagesDiv);
+  } catch (err) {
+    const tip = healthTips[currentLanguage][Math.floor(Math.random() * healthTips[currentLanguage].length)];
+    msgBox.innerHTML += `<div class="ai-chat-message"><strong>🤖 (Offline):</strong> ${tip}</div>`;
   }
-}
 
-async function callOpenAiApi(question, context, messagesDiv) {
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${appData.apiKey}`
-    },
-    body: JSON.stringify({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: `You are a helpful health assistant. Answer in ${
-            currentLanguage === 'tr' ? 'Turkish' : 
-            currentLanguage === 'ar' ? 'Arabic' : 
-            currentLanguage === 'en' ? 'English' : 'Russian'
-          }. Context: ${context}`
-        },
-        { role: 'user', content: question }
-      ],
-      max_tokens: 300,
-      temperature: 0.7
-    })
-  });
-  
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.status}`);
-  }
-  
-  const data = await response.json();
-  const answer = data.choices[0].message.content;
-  
-  messagesDiv.innerHTML += `<div class="ai-chat-message"><strong>🤖 AI:</strong> ${answer}</div>`;
-  messagesDiv.parentElement.scrollTop = messagesDiv.parentElement.scrollHeight;
+  msgBox.scrollTop = msgBox.scrollHeight;
 }
-
-function provideOfflineSuggestion(question, messagesDiv) {
-  const suggestions = {
-    tr: {
-      su: '💧 Su tüketimi çok önemli! Günde en az 2 litre su içmeyi hedefleyin. Daha iyi hissedeceksiniz.',
-      uyku: '😴 Sağlıklı uyku için düzenli uyku saati belirleyin. 7-9 saat ideal.',
-      egzersiz: '🏃 Hergün en az 30 dakika hareket yapın. Adımlarınızı takip etmeyi unutmayın!',
-      ilac: '💊 İlaçlarınızı zamanında almayı unutmayın. Takvim sekmesini kontrol edin.',
-      stress: '😌 Stresi azaltmak için meditasyon veya derin nefes alışkanlığı edinin.',
-      default: '💡 Sağlıklı yaşam için su, uyku ve egzersizeye dikkat edin.'
-    },
-    ar: {
-      ماء: '💧 شرب الماء مهم جداً! استهدف 2 لتر على الأقل يومياً.',
-      نوم: '😴 للنوم الصحي، حدد وقتاً منتظماً للنوم. 7-9 ساعات مثالية.',
-      تمرين: '🏃 تحرك لمدة 30 دقيقة على الأقل يومياً. تتبع خطواتك!',
-      دواء: '💊 لا تنسَ تناول أدويتك في الوقت المحدد. تحقق من التقويم.',
-      stress: '😌 للتغلب على التوتر، جرب التأمل أو التنفس العميق.',
-      default: '💡 للعيش بصحة، انتبه للماء والنوم والتمارين.'
-    },
-    en: {
-      water: '💧 Water is very important! Aim for at least 2 liters per day.',
-      sleep: '😴 For healthy sleep, set a regular sleep schedule. 7-9 hours is ideal.',
-      exercise: '🏃 Move for at least 30 minutes daily. Don\'t forget to track your steps!',
-      medicine: '💊 Don\'t forget to take your medicines on time. Check the schedule.',
-      stress: '😌 To reduce stress, try meditation or deep breathing.',
-      default: '💡 For good health, pay attention to water, sleep, and exercise.'
-    },
-    ru: {
-      вода: '💧 Вода очень важна! Пейте не менее 2 литров в день.',
-      сон: '😴 Для здорового сна установите регулярное время. 7-9 часов идеально.',
-      упражнение: '🏃 Двигайтесь не менее 30 минут в день. Не забывайте отслеживать шаги!',
-      лекарство: '💊 Не забывайте вовремя принимать лекарства. Проверьте график.',
-      стресс: '😌 Чтобы снизить стресс, попробуйте медитацию или глубокое дыхание.',
-      default: '💡 Для хорошего здоровья уделяйте внимание воде, сну и упражнениям.'
-    }
-  };
-  
-  const langSuggestions = suggestions[currentLanguage] || suggestions.en;
-  let answer = langSuggestions.default;
-  
-  const q = question.toLowerCase();
-  for (const [key, value] of Object.entries(langSuggestions)) {
-    if (q.includes(key)) {
-      answer = value;
-      break;
-    }
-  }
-  
-  messagesDiv.innerHTML += `<div class="ai-chat-message"><strong>🤖 AI (Offline):</strong> ${answer}</div>`;
-  messagesDiv.parentElement.scrollTop = messagesDiv.parentElement.scrollHeight;
-}
-
-window.sendAiQuestion = sendAiQuestion;
